@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}
+    Homepage
+{% endblock %}
+{% block myContent %}
+    {% if not current_user.is_anonymous %}
+        <h1>Hello {{ current_user.first_name }} {{ current_user.last_name }}</h1>
+    {% else %}
+        <h1>Hello stranger!</h1>
+    {% endif %}
+    <img src="{{ url_for('static', filename='logo.png') }}"/>
+    {% if not current_user.is_authenticated %}
+        {{ wtf.quick_form(form) }}
+    {% endif %}
+{% endblock %}
