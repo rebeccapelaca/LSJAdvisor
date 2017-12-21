@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, IntegerField, SubmitField, PasswordField
+from wtforms import StringField, IntegerField, SubmitField, PasswordField, RadioField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, NumberRange, Length, EqualTo, ValidationError
 from .models import User
 
@@ -32,3 +32,36 @@ class LoginForm(Form):
         user = User.query.filter_by(username=username.data).first()
         if user is None:
             raise ValidationError('Username does not exist')
+
+class WriteForm(Form):
+
+    categories_not_ordered = ['Houseworks', 'Children', 'School', 'Animals', 'Post Office', 'Supermarket']
+    zones_not_ordered = ['Crocetta', 'Santa Rita', 'Cenisia', 'San Paolo', 'Cit Turin', 'Vanchiglia', 'Barriera Milano', 'Quadrilatero', 'Centro']
+
+    categories_not_ordered.sort()
+    zones_not_ordered.sort()
+
+    categories = [(c, c) for c in categories_not_ordered]
+    zones = [(a, a) for a in zones_not_ordered]
+
+    title = RadioField(choices=[('I need', 'I need'), ('I offer', 'I offer')], validators=[DataRequired()])
+    body = TextAreaField("Description", validators=[DataRequired()])
+    category = SelectField(label="Category", choices=categories)
+    zone = SelectField(label="Zone", choices=zones)
+    submit = SubmitField('Add')
+
+class FindForm(Form):
+
+    categories_not_ordered = ['Houseworks', 'Children', 'School', 'Animals', 'Post Office', 'Supermarket']
+    zones_not_ordered = ['Crocetta', 'Santa Rita', 'Cenisia', 'San Paolo', 'Cit Turin', 'Vanchiglia', 'Barriera Milano', 'Quadrilatero', 'Centro']
+
+    categories_not_ordered.sort()
+    zones_not_ordered.sort()
+
+    categories = [(c, c) for c in categories_not_ordered]
+    zones = [(a, a) for a in zones_not_ordered]
+
+    title = RadioField(choices=[('I offer','I need'),('I need', 'I offer')], validators=[DataRequired()])
+    category = SelectField(label="Category", choices=categories)
+    zone = SelectField(label="Zone", choices=zones)
+    submit = SubmitField('Search')

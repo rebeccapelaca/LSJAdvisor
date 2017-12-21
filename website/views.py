@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash
-from flask_login import login_user, login_required, logout_user
-from .forms import LoginForm, RegistrationForm
-from .models import User
+from flask_login import login_user, login_required, logout_user, current_user
+from .forms import LoginForm, RegistrationForm, WriteForm, FindForm
+from .models import User, Ad
 
 from . import app, db, login_manager
 
@@ -14,13 +14,13 @@ def get_user(username):
 def setup_db():
     db.create_all()
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    myForm = LoginForm()
-    if myForm.validate_on_submit():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
         # we are certain user exists because of the username validator of LoginForm
-        user = get_user(myForm.username.data)
-        if user.check_password(myForm.password.data):
+        user = get_user(form.username.data)
+        if user.check_password(form.password.data):
             # login the user, then redirect to his user page
             login_user(user)
             flash('User logged in!', 'success')
@@ -28,15 +28,15 @@ def index():
         else:
             flash('Incorrect password!', 'danger')
 
-    return render_template('homepage.html', form=myForm)
+    return render_template('login.html', form=form)
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+@app.route('/')
+def index():
+    return render_template('homepage.html')
 
 @app.route('/contacts')
 def contacts():
-    return redirect(url_for('about'))
+    return render_template('contacts.html')
 
 @app.route('/user')
 @login_required
@@ -55,7 +55,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('User succesfully registered', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
 
@@ -65,3 +65,19 @@ def logout():
     logout_user()
     flash('User logged out!', 'success')
     return redirect(url_for('index'))
+
+def datetimeformat(value, format='%B %d, %Y %I:%M:%S %Z'):
+    return value.strftime(format)
+
+app.jinja_env.filters['datetimeformat'] = datetimeformat
+
+@app.route('/writeAd', methods=['GET', 'POST'])
+def writeAd():
+    form = WriteForm()
+    if form.validate_on_submit():
+        ad = Ad(title=form.title.data, category=form.category.data, body=form.body.data,\
+                    zone=form.zone.data,author=current_user._get_current_object())
+        db.session.add(ad)
+        db.session.commit()
+    ads = Ad.query.order_by(Ad.created_at.desc()).all()
+    return render_template('writeAd.html', form=form, ads=ads)

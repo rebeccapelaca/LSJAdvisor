@@ -4,13 +4,14 @@
     Homepage
 {% endblock %}
 {% block myContent %}
-    {% if not current_user.is_anonymous %}
-        <h1>Hello {{ current_user.first_name }} {{ current_user.last_name }}</h1>
-    {% else %}
-        <h1>Hello stranger!</h1>
-    {% endif %}
-    <img src="{{ url_for('static', filename='logo.png') }}"/>
-    {% if not current_user.is_authenticated %}
-        {{ wtf.quick_form(form) }}
-    {% endif %}
+    <div class="page-header">
+        <h1>The market place for your time</h1>
+        <p>LSJAdvisor aims at creating a contact between links people who need help with low skilled jobs and those who are looking for an occasionally job.</p>
+    </div>
+    <div>
+        <p>Looking for someone to help you with housework jobs you can't be bothered by?</p>
+    </div>
+    <div>
+        <p>Looking for work but not so skilled?</p>
+    </div>
 {% endblock %}
