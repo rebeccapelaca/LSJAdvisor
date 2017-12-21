@@ -1,10 +1,38 @@
 {% extends "base.html" %}
-{% block title %}{{ current_user.username }}{% endblock %}
+{% block title %}{{ current_user.email }}{% endblock %}
 {% block myContent %}
     <div class="page-header">
         <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+        <h5>{{ current_user.email }}</h5>
     </div>
     <div>
         <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
+            <a class="btn btn-default" href="{{ url_for('findAd') }}">Find</a>
     </div>
+    <br>
+    <h4>Ads:</h4>
+    <ul class="posts">
+        {% for ad in ads %}
+            <li class="post">
+                <div class="post-author">
+                    <a href="{{ url_for('user') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a>
+                </div>
+                <div class="post-date">
+                    {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                </div>
+                <div class="post-title">
+                    <h4>Title: </h4> {{ ad.title }}
+                </div>
+                <div class="post-category">
+                    <h4>Category: </h4>{{ ad.category }}
+                </div>
+                <div class="post-body">
+                    <h4>Description: </h4>{{ ad.body }}
+                </div>
+                <div class="post-zone">
+                    <h4>Zone: </h4>{{ ad.zone }}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

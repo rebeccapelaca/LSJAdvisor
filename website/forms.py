@@ -3,35 +3,29 @@ from wtforms import StringField, IntegerField, SubmitField, PasswordField, Radio
 from wtforms.validators import DataRequired, NumberRange, Length, EqualTo, ValidationError
 from .models import User
 
-class NameForm(Form):
-    first_name = StringField('First name', validators=[DataRequired()])
-    last_name = StringField('Last name', validators=[DataRequired()])
-    age = IntegerField('Age', validators=[NumberRange(min=18)])
-    submit = SubmitField('Submit')
-
 class RegistrationForm(Form):
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
-    username = StringField('Username', validators=[DataRequired(), Length(min=4)])
+    email = StringField('Email', validators=[DataRequired(), Length(min=4)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     password2 = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Username already exists')
+            raise ValidationError('Email already exists')
 
 
 class LoginForm(Form):
-    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
         if user is None:
-            raise ValidationError('Username does not exist')
+            raise ValidationError('Email does not exist')
 
 class WriteForm(Form):
 
@@ -64,4 +58,4 @@ class FindForm(Form):
     title = RadioField(choices=[('I offer','I need'),('I need', 'I offer')], validators=[DataRequired()])
     category = SelectField(label="Category", choices=categories)
     zone = SelectField(label="Zone", choices=zones)
-    submit = SubmitField('Search')
+    submit = SubmitField('Find')

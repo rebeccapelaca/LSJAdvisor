@@ -3,7 +3,7 @@
 {% block myContent %}
     <div class="page-header">
         <h1>LSJAdvisor</h1>
-        <h4>Choose if you would to need or to offer some help, insert a description about, specify a zone and add the post</h4>
+        <h4>Choose if you would to need or to offer some help, specify a zone and look for ads near you</h4>
     </div>
     {{ wtf.quick_form(form) }}
     <br>
@@ -29,6 +29,11 @@
                     <h4>Zone: </h4>{{ ad.zone }}
                 </div>
             </li>
+            <br>
         {% endfor %}
     </ul>
+    <div>
+        <h4>If you don't find what do you want, write a new ad</h4>
+        <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
+    </div>
 {% endblock %}

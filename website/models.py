@@ -8,12 +8,12 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
-    username = db.Column(db.String, nullable=False, unique=True, index=True)
+    email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
     ads = db.relationship('Ad', backref='author', lazy='dynamic')
 
     def get_id(self):
-        return self.username
+        return self.email
 
     @property
     def password(self):
