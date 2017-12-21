@@ -56,6 +56,33 @@ class FindForm(Form):
     zones = [(a, a) for a in zones_not_ordered]
 
     title = RadioField(choices=[('I offer','I need'),('I need', 'I offer')], validators=[DataRequired()])
-    category = SelectField(label="Category", choices=categories)
-    zone = SelectField(label="Zone", choices=zones)
+    category = SelectField(label="Category", choices=categories, validators=[DataRequired()])
+    zone = SelectField(label="Zone", choices=zones, validators=[DataRequired()])
     submit = SubmitField('Find')
+
+class EditForm(Form):
+
+    categories_not_ordered = ['Houseworks', 'Children', 'School', 'Animals', 'Post Office', 'Supermarket']
+    zones_not_ordered = ['Crocetta', 'Santa Rita', 'Cenisia', 'San Paolo', 'Cit Turin', 'Vanchiglia', 'Barriera Milano', 'Quadrilatero', 'Centro']
+
+    categories_not_ordered.sort()
+    zones_not_ordered.sort()
+
+    categories = [(c, c) for c in categories_not_ordered]
+    zones = [(a, a) for a in zones_not_ordered]
+
+    title = RadioField(choices=[('I need', 'I need'), ('I offer', 'I offer')], validators=[DataRequired()])
+    body = TextAreaField("Description", validators=[DataRequired()])
+    category = SelectField(label="Category", choices=categories, validators=[DataRequired()])
+    zone = SelectField(label="Zone", choices=zones, validators=[DataRequired()])
+    submit = SubmitField('Edit')
+
+class WriteRating(Form):
+
+    votes_not_ordered = ['1','2','3','4','5']
+    votes_not_ordered.sort()
+    votes = [(c, c) for c in votes_not_ordered]
+
+    comment = TextAreaField("Comment")
+    vote = SelectField(label="Vote", choices=votes, validators=[DataRequired()])
+    submit = SubmitField('Add rating')

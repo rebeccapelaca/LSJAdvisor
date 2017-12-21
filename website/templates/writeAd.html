@@ -11,7 +11,7 @@
         {% for ad in ads %}
             <li class="post">
                 <div class="post-author">
-                    <a href="{{ url_for('user') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a>
+                    <a href="{{ url_for('user') }}">{{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
                 </div>
                 <div class="post-date">
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}

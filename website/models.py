@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
     ads = db.relationship('Ad', backref='author', lazy='dynamic')
+    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
 
     def get_id(self):
         return self.email
@@ -33,6 +34,25 @@ class Ad(db.Model):
     body = db.Column(db.Text)
     zone = db.Column(db.String(255))
     category = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def get_id(self):
+        return self.id
+
+    def get_first_name(self):
+        author = User.query.filter_by(id=self.author_id).first()
+        return author.first_name
+
+    def get_last_name(self):
+        author = User.query.filter_by(id=self.author_id).first()
+        return author.last_name
+
+class Rating(db.Model):
+    __tablename__ = 'ratings'
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.Text)
+    vote = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

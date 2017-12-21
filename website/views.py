@@ -1,6 +1,6 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import LoginForm, RegistrationForm, WriteForm, FindForm
+from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm
 from .models import User, Ad
 
 from . import app, db, login_manager
@@ -92,3 +92,33 @@ def findAd():
         ads = Ad.query.filter_by(title=form.title.data, zone=form.zone.data, category=form.category.data)\
                 .order_by(Ad.created_at.desc()).all()
     return render_template('findAd.html', form=form, ads=ads)
+
+@app.route('/editAd/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editAd(id):
+    ad = Ad.query.get_or_404(id)
+    if current_user.id != ad.author_id:
+        abort(403)
+    form = EditForm()
+    if form.validate_on_submit():
+        ad.body = form.body.data
+        db.session.add(ad)
+        db.session.commit()
+        flash('The ad has been updated', 'success')
+        return redirect(url_for('writeAd', id=ad.get_id()))
+    form.title.data = ad.title
+    form.body.data = ad.body
+    form.category.data = ad.category
+    form.zone.data = ad.zone
+    return render_template('editAd.html', form=form, ad=ad)
+
+@app.route('/deleteAd/<int:id>', methods=['GET', 'POST'])
+@login_required
+def deleteAd(id):
+    ad = Ad.query.get_or_404(id)
+    if current_user.id != ad.author_id:
+        abort(403)
+    db.session.delete(ad)
+    db.session.commit()
+    flash('The ad has been removed', 'success')
+    return redirect(url_for('user'))
