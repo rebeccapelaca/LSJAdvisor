@@ -40,6 +40,14 @@ class Ad(db.Model):
     def get_id(self):
         return self.id
 
+    def get_author_email(self):
+        author = User.query.filter_by(id=self.author_id).first()
+        return author.email
+
+    def get_author_id(self):
+        author = User.query.filter_by(id=self.author_id).first()
+        return author.id
+
     def get_first_name(self):
         author = User.query.filter_by(id=self.author_id).first()
         return author.first_name

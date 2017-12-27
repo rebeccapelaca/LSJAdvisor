@@ -1,13 +1,15 @@
 {% extends "base.html" %}
-{% block title %}{{ current_user.email }}{% endblock %}
+{% block title %}{{ author_ads.email }}{% endblock %}
 {% block myContent %}
     <div class="page-header">
-        <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
-        <h5>{{ current_user.email }}</h5>
+        <h1>{{ author_ads.first_name }} {{ author_ads.last_name }}</h1>
+        <h5>{{ author_ads.email }}</h5>
     </div>
     <div>
-        <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
+        {% if current_user == author_ads %}
+            <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
             <a class="btn btn-default" href="{{ url_for('findAd') }}">Find</a>
+        {% endif %}
     </div>
     <br>
     {% if size>0 %}
@@ -17,7 +19,7 @@
         {% for ad in ads %}
             <li class="post">
                 <div class="post-author">
-                    <a href="{{ url_for('user') }}">{{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
+                    <a href="{{ url_for('other_user', id=author_ads.id) }}">{{ author_ads.first_name }} {{ author_ads.last_name }}</a>
                 </div>
                 <div class="post-date">
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
@@ -35,7 +37,7 @@
                     <h4>Zone: </h4>{{ ad.zone }}
                 </div>
                 <div class="post-footer">
-                    {% if current_user == ad.author %}
+                    {% if current_user == author_ads %}
                         <a href="{{ url_for('editAd', id=ad.id) }}">
                             <span class="label label-primary">Edit</span>
                         </a>

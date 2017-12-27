@@ -53,7 +53,8 @@ def login():
 @login_required
 def user():
     ads = Ad.query.filter_by(author=current_user).order_by(Ad.created_at.desc()).all()
-    return render_template('user.html', ads=ads)
+    size = len(ads)
+    return render_template('user.html', ads=ads, size=size)
 
 @app.route('/contacts')
 def contacts():
@@ -101,11 +102,14 @@ def editAd(id):
         abort(403)
     form = EditForm()
     if form.validate_on_submit():
+        ad.title = form.title.data
         ad.body = form.body.data
+        ad.category = form.category.data
+        ad.zone = form.zone.data
         db.session.add(ad)
         db.session.commit()
         flash('The ad has been updated', 'success')
-        return redirect(url_for('writeAd', id=ad.get_id()))
+        return redirect(url_for('writeAd', id=id))
     form.title.data = ad.title
     form.body.data = ad.body
     form.category.data = ad.category
@@ -122,3 +126,11 @@ def deleteAd(id):
     db.session.commit()
     flash('The ad has been removed', 'success')
     return redirect(url_for('user'))
+
+@app.route('/other_user/<int:id>', methods=['GET', 'POST'])
+@login_required
+def other_user(id):
+    author_ads = User.query.filter_by(id=id).first()
+    ads = Ad.query.filter_by(author=author_ads).order_by(Ad.created_at.desc()).all()
+    size = len(ads)
+    return render_template('other_user.html', author_ads=author_ads, ads=ads, size=size)
