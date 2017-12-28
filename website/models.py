@@ -11,7 +11,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
     ads = db.relationship('Ad', backref='author', lazy='dynamic')
-    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
+#    messages_sent = db.relationship('Message', backref='sender', lazy='dynamic')
+#    messages_received = db.relationship('Message', backref='addressee', lazy='dynamic')
+#    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
 
     def get_id(self):
         return self.email
@@ -56,13 +58,23 @@ class Ad(db.Model):
         author = User.query.filter_by(id=self.author_id).first()
         return author.last_name
 
-class Rating(db.Model):
-    __tablename__ = 'ratings'
+class Message(db.Model):
+    __tablename__= 'messages'
     id = db.Column(db.Integer, primary_key=True)
-    comment = db.Column(db.Text)
-    vote = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    addressee_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    body = db.Column(db.Text)
 
     def get_id(self):
         return self.id
+
+#class Rating(db.Model):
+#    __tablename__ = 'ratings'
+#    id = db.Column(db.Integer, primary_key=True)
+#    comment = db.Column(db.Text)
+#    vote = db.Column(db.Integer)
+#    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+#    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+#    def get_id(self):
+#        return self.id

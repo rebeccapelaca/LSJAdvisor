@@ -77,6 +77,10 @@ class EditForm(Form):
     zone = SelectField(label="Zone", choices=zones, validators=[DataRequired()])
     submit = SubmitField('Edit')
 
+class WriteMessage(Form):
+    body = TextAreaField("Message")
+    submit = SubmitField('Send')
+
 class WriteRating(Form):
 
     votes_not_ordered = ['1','2','3','4','5']

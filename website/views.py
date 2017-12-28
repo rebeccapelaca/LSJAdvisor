@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm
-from .models import User, Ad
+from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage
+from .models import User, Ad, Message
 
 from . import app, db, login_manager
 
@@ -134,3 +134,17 @@ def other_user(id):
     ads = Ad.query.filter_by(author=author_ads).order_by(Ad.created_at.desc()).all()
     size = len(ads)
     return render_template('other_user.html', author_ads=author_ads, ads=ads, size=size)
+
+@app.route('/writeMessage/<int:id>', methods=['GET', 'POST'])
+@login_required
+def writeMessage(id):
+    form = WriteMessage()
+    if form.validate_on_submit():
+        addressee = User.query.filter_by(id=id).first()
+        message = Message(sender=current_user._get_current_object(), body=form.body.data, addressee=addressee)
+        db.session.add(message)
+        db.session.commit()
+        flash('Message successfully sent!', 'success')
+    return render_template('writeMessage.html', form=form)
+
+

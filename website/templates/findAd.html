@@ -28,6 +28,13 @@
                 <div class="post-zone">
                     <h4>Zone: </h4>{{ ad.zone }}
                 </div>
+                <div class="post-footer">
+                    {% if current_user != ad.author %}
+                        <a href="{{ url_for('writeMessage', id=ad.get_author_id()) }}">
+                            <span class="label label-info">Contact</span>
+                        </a>
+                    {% endif %}
+                </div>
             </li>
             <br>
         {% endfor %}
