@@ -104,3 +104,11 @@ div.flask-pagedown-preview h3 {
 .table.followers tr {
     border-bottom: 1px solid #e0e0e0;
 }
+
+h5 {
+    font-style: italic;
+}
+
+.email {
+    font-style: italic;
+}
