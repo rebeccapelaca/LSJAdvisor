@@ -141,10 +141,26 @@ def writeMessage(id):
     form = WriteMessage()
     if form.validate_on_submit():
         addressee = User.query.filter_by(id=id).first()
-        message = Message(sender=current_user._get_current_object(), body=form.body.data, addressee=addressee)
+        message = Message(sender=current_user._get_current_object(), body=form.body.data, addressee=addressee, read=False, object=form.object.data)
         db.session.add(message)
         db.session.commit()
         flash('Message successfully sent!', 'success')
     return render_template('writeMessage.html', form=form)
 
+@app.route('/messages')
+@login_required
+def messages():
+    received = Message.query.filter_by(addressee_id=current_user.id).all()
+    sent = Message.query.filter_by(sender_id=current_user.id).all()
+    size_msg_received = len(received)
+    size_msg_sent = len(sent)
+    return render_template('messages.html', received=received, sent=sent, size_msg_received=size_msg_received, size_msg_sent=size_msg_sent)
 
+@app.route('/checkRead/<int:id>')
+@login_required
+def checkRead(id):
+    msg = Message.query.get_or_404(id)
+    msg.read = True
+    db.session.add(msg)
+    db.session.commit()
+    return redirect(url_for('messages'))

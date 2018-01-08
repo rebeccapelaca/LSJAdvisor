@@ -13,6 +13,7 @@
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('logout') }}">Logout</a></li>
                         <li><a href="{{ url_for('user') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a></li>
+                        <li><a href="{{ url_for('messages') }}">Messages</a></li>
                     {% else %}
                         <li><a href="{{ url_for('login') }}">Login</a></li>
                         <li><a href="{{ url_for('register') }}">Register</a></li>

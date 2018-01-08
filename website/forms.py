@@ -78,6 +78,7 @@ class EditForm(Form):
     submit = SubmitField('Edit')
 
 class WriteMessage(Form):
+    object = StringField("Object")
     body = TextAreaField("Message")
     submit = SubmitField('Send')
 

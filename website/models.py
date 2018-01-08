@@ -11,8 +11,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
     ads = db.relationship('Ad', backref='author', lazy='dynamic')
-#    messages_sent = db.relationship('Message', backref='sender', lazy='dynamic')
-#    messages_received = db.relationship('Message', backref='addressee', lazy='dynamic')
 #    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
 
     def get_id(self):
@@ -38,6 +36,7 @@ class Ad(db.Model):
     category = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
 
     def get_id(self):
         return self.id
@@ -63,7 +62,13 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     addressee_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    object = db.Column(db.String(255))
+    read = db.Column(db.Boolean)
     body = db.Column(db.Text)
+
+    sender = db.relationship('User', backref='sent_messages', foreign_keys=[sender_id])
+    addressee = db.relationship('User', backref='received_messages', foreign_keys=[addressee_id])
 
     def get_id(self):
         return self.id
@@ -75,6 +80,7 @@ class Message(db.Model):
 #    vote = db.Column(db.Integer)
 #    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 #    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#    ad_id = db.Column(db.Integer, db.ForeignKey('ads.id'))
 
 #    def get_id(self):
 #        return self.id
