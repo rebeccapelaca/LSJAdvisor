@@ -36,6 +36,7 @@ class Ad(db.Model):
     category = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    done = db.Column(db.Boolean)
 #    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
 
     def get_id(self):
@@ -62,6 +63,7 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     addressee_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    ad_id = db.Column(db.Integer, db.ForeignKey('ads.id'))
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     object = db.Column(db.String(255))
     read = db.Column(db.Boolean)
@@ -69,6 +71,7 @@ class Message(db.Model):
 
     sender = db.relationship('User', backref='sent_messages', foreign_keys=[sender_id])
     addressee = db.relationship('User', backref='received_messages', foreign_keys=[addressee_id])
+    ad = db.relationship('Ad', backref='ad', foreign_keys=[ad_id])
 
     def get_id(self):
         return self.id

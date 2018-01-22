@@ -52,9 +52,12 @@ def login():
 @app.route('/user')
 @login_required
 def user():
-    ads = Ad.query.filter_by(author=current_user).order_by(Ad.created_at.desc()).all()
-    size = len(ads)
-    return render_template('user.html', ads=ads, size=size)
+    ads_not_completed = Ad.query.filter_by(author=current_user, done=False).order_by(Ad.created_at.desc()).all()
+    size_not = len(ads_not_completed)
+    ads_completed = Ad.query.filter_by(author=current_user, done=True).order_by(Ad.created_at.desc()).all()
+    size = len(ads_completed)
+    return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,\
+                           ads_completed=ads_completed, size=size)
 
 @app.route('/contacts')
 def contacts():
@@ -77,7 +80,7 @@ def writeAd():
     form = WriteForm()
     if form.validate_on_submit():
         ad = Ad(title=form.title.data, category=form.category.data, body=form.body.data,\
-                    zone=form.zone.data,author=current_user._get_current_object())
+                    zone=form.zone.data,author=current_user._get_current_object(), done=False)
         db.session.add(ad)
         db.session.commit()
         flash('Ad successfully added!', 'success')
@@ -136,12 +139,13 @@ def other_user(id):
     return render_template('other_user.html', author_ads=author_ads, ads=ads, size=size)
 
 @app.route('/writeMessage/<int:id>', methods=['GET', 'POST'])
+@app.route('/writeMessage/<int:id>/<int:ad_id>', methods=['GET', 'POST'])
 @login_required
-def writeMessage(id):
+def writeMessage(id, ad_id):
     form = WriteMessage()
     if form.validate_on_submit():
         addressee = User.query.filter_by(id=id).first()
-        message = Message(sender=current_user._get_current_object(), body=form.body.data, addressee=addressee, read=False, object=form.object.data)
+        message = Message(ad_id=ad_id, sender=current_user._get_current_object(), body=form.body.data, addressee=addressee, read=False, object=form.object.data)
         db.session.add(message)
         db.session.commit()
         flash('Message successfully sent!', 'success')
@@ -150,17 +154,36 @@ def writeMessage(id):
 @app.route('/messages')
 @login_required
 def messages():
-    received = Message.query.filter_by(addressee_id=current_user.id).all()
-    sent = Message.query.filter_by(sender_id=current_user.id).all()
+    received = Message.query.filter_by(addressee_id=current_user.id).order_by(Message.created_at.desc()).all()
+    sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.created_at.desc()).all()
     size_msg_received = len(received)
     size_msg_sent = len(sent)
     return render_template('messages.html', received=received, sent=sent, size_msg_received=size_msg_received, size_msg_sent=size_msg_sent)
 
-@app.route('/checkRead/<int:id>')
+@app.route('/markAsRead/<int:id>')
 @login_required
-def checkRead(id):
+def markAsRead(id):
     msg = Message.query.get_or_404(id)
     msg.read = True
     db.session.add(msg)
     db.session.commit()
+    return redirect(url_for('messages'))
+
+@app.route('/deleteMessage/<int:id>', methods=['GET', 'POST'])
+@login_required
+def deleteMessage(id):
+    msg = Message.query.get_or_404(id)
+    db.session.delete(msg)
+    db.session.commit()
+    flash('The message has been removed', 'success')
+    return redirect(url_for('messages'))
+
+@app.route('/markAsDone/<int:id>')
+@login_required
+def markAsDone(id):
+    ad = Ad.query.get_or_404(id)
+    ad.done = True
+    db.session.add(ad)
+    db.session.commit()
+    flash('The ad has been marked as done', 'success')
     return redirect(url_for('messages'))

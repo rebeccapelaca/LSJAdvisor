@@ -9,42 +9,58 @@
     {% if size_msg_received==0 %}
         <h4>No message received</h4>
     {% endif %}
-    <ul class="posts">
+    <ul class="messages">
         {% for msg in received %}
             {% if msg.read==False %}
-                <li class="noread">
-                    <div class="post-author">
+                <li class="messageNoRead">
+                    <div class="message-author">
                         <a href="{{ url_for('other_user', id=msg.sender_id) }}">{{ msg.sender.first_name }} {{ msg.sender.last_name }}</a>
                     </div>
-                    <div class="post-date">
+                    <div class="message-date">
                         {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                     </div>
-                    <div class="post-title">
+                    <div class="message-title">
                         <h4>Object: </h4> {{ msg.object }}
                     </div>
-                    <div class="post-body">
+                    <div class="message-body">
                         <h4>Message: </h4> {{ msg.body }}
                     </div>
-                    <div class="post-footer">
-                        <a href="{{ url_for('checkRead', id=msg.id) }}">
-                            <span class="label label-info">Check</span>
+                    <div class="message-footer">
+                        <a href="{{ url_for('markAsRead', id=msg.id) }}">
+                            <span class="label label-info">Mark as read</span>
+                        </a>
+                        <a href="{{ url_for('writeMessage', id=msg.sender_id, ad_id=msg.ad_id) }}">
+                            <span class="label label-primary">Reply</span>
+                        </a>
+                        <a href="{{ url_for('deleteMessage', id=msg.id) }}">
+                            <span class="label label-danger">Delete</span>
                         </a>
                     </div>
                 </li>
             {% endif %}
             {% if msg.read==True %}
-                <li class="post">
-                    <div class="post-author">
+                <li class="messageRead">
+                    <div class="message-author">
                         <a href="{{ url_for('other_user', id=msg.sender_id) }}">{{ msg.sender.first_name }} {{ msg.sender.last_name }}</a>
                     </div>
-                    <div class="post-date">
+                    <div class="message-date">
                         {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                     </div>
-                    <div class="post-title">
+                    <div class="message-title">
                         <h4>Object: </h4> {{ msg.object }}
                     </div>
-                    <div class="post-body">
+                    <div class="message-body">
                         <h4>Message: </h4> {{ msg.body }}
+                    </div>
+                    <div class="message-footer">
+                        <a href="{{ url_for('writeMessage', id=msg.sender_id, ad_id=msg.ad_id) }}">
+                            <span class="label label-primary">Reply</span>
+                        </a>
+                        {% if msg.ad.done==False %}
+                            <a href="{{ url_for('markAsDone', id=msg.ad_id) }}">
+                                <span class="label label-success">Mark as done</span>
+                            </a>
+                        {% endif %}
                     </div>
                 </li>
             {% endif %}
@@ -55,19 +71,19 @@
         {% if size_msg_sent==0 %}
         <h4>No message sent</h4>
     {% endif %}
-    <ul class="post">
+    <ul class="messages">
         {% for msg in sent %}
-            <li class="post">
-                <div class="post-author">
+            <li class="messageRead">
+                <div class="message-author">
                     <a href="{{ url_for('other_user', id=msg.sender_id) }}">{{ msg.sender.first_name }} {{ msg.sender.last_name }}</a>
                 </div>
-                <div class="post-date">
+                <div class="message-date">
                     {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
-                <div class="post-title">
+                <div class="message-title">
                     <h4>Object: </h4> {{ msg.object }}
                 </div>
-                <div class="post-body">
+                <div class="message-body">
                     <h4>Message: </h4> {{ msg.body }}
                 </div>
             </li>
