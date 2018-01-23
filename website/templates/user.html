@@ -71,6 +71,43 @@
                 <div class="post-zone">
                     <h4>Zone: </h4>{{ ad.zone }}
                 </div>
+                <div class="message-footer">
+                    <a href="{{ url_for('addRating', ad_id=ad.id) }}">
+                        <span class="label label-success">Add rating</span>
+                    </a>
+                </div>
+             </li>
+        {% endfor %}
+    </ul>
+    {% if size_other>0 %}
+        <h4>Other ads completed:</h4>
+    {% endif %}
+    <ul class="posts">
+        {% for ad in other_ads_completed %}
+            <li class="post">
+                <div class="post-author">
+                    <a href="{{ url_for('user') }}">{{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
+                </div>
+                <div class="post-date">
+                    {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                </div>
+                <div class="post-title">
+                    <h4>Title: </h4> {{ ad.title }}
+                </div>
+                <div class="post-category">
+                    <h4>Category: </h4>{{ ad.category }}
+                </div>
+                <div class="post-body">
+                    <h4>Description: </h4>{{ ad.body }}
+                </div>
+                <div class="post-zone">
+                    <h4>Zone: </h4>{{ ad.zone }}
+                </div>
+                <div class="message-footer">
+                    <a href="{{ url_for('addRating', ad_id=ad.id) }}">
+                        <span class="label label-success">Add rating</span>
+                    </a>
+                </div>
              </li>
         {% endfor %}
     </ul>

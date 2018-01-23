@@ -10,8 +10,6 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String)
     email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
-    ads = db.relationship('Ad', backref='author', lazy='dynamic')
-#    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
 
     def get_id(self):
         return self.email
@@ -36,8 +34,12 @@ class Ad(db.Model):
     category = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    other_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     done = db.Column(db.Boolean)
-#    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
+    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
+
+    author = db.relationship('User', backref='author', foreign_keys=[author_id])
+    other = db.relationship('User', backref='other', foreign_keys=[other_user_id])
 
     def get_id(self):
         return self.id
@@ -76,14 +78,14 @@ class Message(db.Model):
     def get_id(self):
         return self.id
 
-#class Rating(db.Model):
-#    __tablename__ = 'ratings'
-#    id = db.Column(db.Integer, primary_key=True)
-#    comment = db.Column(db.Text)
-#    vote = db.Column(db.Integer)
-#    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-#    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-#    ad_id = db.Column(db.Integer, db.ForeignKey('ads.id'))
+class Rating(db.Model):
+    __tablename__ = 'ratings'
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.Text)
+    vote = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    ad_id = db.Column(db.Integer, db.ForeignKey('ads.id'))
 
-#    def get_id(self):
-#        return self.id
+    def get_id(self):
+        return self.id

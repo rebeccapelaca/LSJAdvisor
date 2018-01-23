@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage
-from .models import User, Ad, Message
+from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating
+from .models import User, Ad, Message, Rating
 
 from . import app, db, login_manager
 
@@ -56,8 +56,11 @@ def user():
     size_not = len(ads_not_completed)
     ads_completed = Ad.query.filter_by(author=current_user, done=True).order_by(Ad.created_at.desc()).all()
     size = len(ads_completed)
+    other_ads_completed = Ad.query.filter_by(other=current_user, done=True).order_by(Ad.created_at.desc()).all()
+    size_other = len(other_ads_completed)
     return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,\
-                           ads_completed=ads_completed, size=size)
+                           ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,\
+                           size_other=size_other)
 
 @app.route('/contacts')
 def contacts():
@@ -80,7 +83,7 @@ def writeAd():
     form = WriteForm()
     if form.validate_on_submit():
         ad = Ad(title=form.title.data, category=form.category.data, body=form.body.data,\
-                    zone=form.zone.data,author=current_user._get_current_object(), done=False)
+                    zone=form.zone.data,author=current_user._get_current_object(),other_user_id=None, done=False)
         db.session.add(ad)
         db.session.commit()
         flash('Ad successfully added!', 'success')
@@ -178,12 +181,25 @@ def deleteMessage(id):
     flash('The message has been removed', 'success')
     return redirect(url_for('messages'))
 
-@app.route('/markAsDone/<int:id>')
+@app.route('/markAsDone/<int:ad_id>')
+@app.route('/markAsDone/<int:ad_id>/<int:other_id>', methods=['GET', 'POST'])
 @login_required
-def markAsDone(id):
-    ad = Ad.query.get_or_404(id)
+def markAsDone(ad_id, other_id):
+    ad = Ad.query.get_or_404(ad_id)
     ad.done = True
+    ad.other_user_id = other_id
     db.session.add(ad)
     db.session.commit()
     flash('The ad has been marked as done', 'success')
     return redirect(url_for('messages'))
+
+@app.route('/addRating/<int:ad_id>', methods=['GET', 'POST'])
+@login_required
+def addRating(ad_id):
+    form = WriteRating()
+    if form.validate_on_submit():
+        rating = Rating(ad_id=ad_id, author_id=current_user.id, comment=form.comment.data, vote=form.vote.data)
+        db.session.add(rating)
+        db.session.commit()
+        flash('Rating successfully added!', 'success')
+    return render_template('writeRating.html', form=form)
