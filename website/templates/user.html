@@ -5,6 +5,7 @@
         <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5>{{ current_user.email }}</h5>
     </div>
+    <br>
     <div>
         <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
             <a class="btn btn-default" href="{{ url_for('findAd') }}">Find</a>
