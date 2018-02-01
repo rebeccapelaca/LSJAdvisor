@@ -16,6 +16,14 @@ class RegistrationForm(Form):
         if user is not None:
             raise ValidationError('Email already exists')
 
+class EditProfileForm(Form):
+    first_name = StringField('First name', validators=[DataRequired()])
+    last_name = StringField('Last name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Length(min=4)])
+    password_last = PasswordField('Last password', validators=[DataRequired(), Length(min=6)])
+    password = PasswordField('New password', validators=[DataRequired(), Length(min=6)])
+    password2 = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Edit')
 
 class LoginForm(Form):
     email = StringField('Email', validators=[DataRequired()])

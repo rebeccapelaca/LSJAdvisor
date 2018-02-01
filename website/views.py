@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating
+from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating, EditProfileForm
 from .models import User, Ad, Message, Rating
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import app, db, login_manager
 
@@ -203,3 +204,30 @@ def addRating(ad_id):
         db.session.commit()
         flash('Rating successfully added!', 'success')
     return render_template('writeRating.html', form=form)
+
+@app.route('/editProfile',methods=['GET', 'POST'])
+@login_required
+def editProfile():
+    profile = User.query.get_or_404(current_user.id)
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        profile.first_name = form.first_name.data
+        profile.last_name = form.last_name.data
+        if form.email.data != profile.email:
+            p = User.query.filter_by(email=form.email.data).first()
+            if p is not None:
+                flash('Email already exists', 'warning')
+            else:
+                profile.email = form.email.data
+        if check_password_hash(profile.password_hash, form.password_last.data):
+            profile.password_hash = generate_password_hash(form.password.data)
+            db.session.add(profile)
+            db.session.commit()
+            flash('The profile has been updated', 'success')
+            return redirect(url_for('editProfile'))
+        else:
+            flash('The last password is not correct', 'warning')
+    form.first_name.data = profile.first_name
+    form.last_name.data = profile.last_name
+    form.email.data = profile.email
+    return render_template('editProfile.html', form=form)
