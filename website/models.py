@@ -35,8 +35,11 @@ class Ad(db.Model):
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     other_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    confirmed = db.Column(db.Boolean)
     done = db.Column(db.Boolean)
     ratings = db.relationship('Rating', backref='author', lazy='dynamic')
+    rating_done = db.Column(db.Boolean)
+    payed = db.Column(db.Boolean)
 
     author = db.relationship('User', backref='author', foreign_keys=[author_id])
     other = db.relationship('User', backref='other', foreign_keys=[other_user_id])
@@ -85,7 +88,13 @@ class Rating(db.Model):
     vote = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    addressee_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     ad_id = db.Column(db.Integer, db.ForeignKey('ads.id'))
+
+    author_rating = db.relationship('User', backref='author_rating', foreign_keys=[author_id])
+    addressee_rating = db.relationship('User', backref='addressee_rating', foreign_keys=[addressee_id])
+    ad_rating = db.relationship('Ad', backref='ad_rating', foreign_keys=[ad_id])
+
 
     def get_id(self):
         return self.id

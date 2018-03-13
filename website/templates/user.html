@@ -2,8 +2,23 @@
 {% block title %}{{ current_user.email }}{% endblock %}
 {% block myContent %}
     <div class="page-header">
+        {% if messages_number>0 %}
+            {% if messages_number==1 %}
+                <h4>You have {{ messages_number }} unread message!</h4>
+                <br>
+            {% endif %}
+            {% if messages_number!=1 %}
+                <h4>You have {{ messages_number }} unread messages!</h4>
+                <br>
+            {% endif %}
+        {% endif %}
         <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5>{{ current_user.email }}</h5>
+        {% if size_ratings>0 %}
+            <br>
+            <h6>Average rating: {{ average_votes }}</h6>
+            <a href="{{ url_for('seeRatings') }}">See all ratings</a>
+        {% endif %}
     </div>
     <br>
     <div>
@@ -48,6 +63,13 @@
                         <a href="{{ url_for('deleteAd', id=ad.id) }}">
                             <span class="label label-danger">Delete</span>
                         </a>
+                        {% if ad.done==False %}
+                            {% if ad.confirmed==True %}
+                                <a href="{{ url_for('markAsDone', ad_id=ad.id) }}">
+                                    <span class="label label-success">Mark as done</span>
+                                </a>
+                            {% endif %}
+                        {% endif %}
                     {% endif %}
                 </div>
             </li>
@@ -78,9 +100,19 @@
                     <h4>Zone: </h4>{{ ad.zone }}
                 </div>
                 <div class="message-footer">
-                    <a href="{{ url_for('addRating', ad_id=ad.id) }}">
-                        <span class="label label-success">Add rating</span>
-                    </a>
+                    {% if ad.payed == False %}
+                        <a href="{{ url_for('markAsPayed', ad_id=ad.id) }}">
+                            <span class="label label-warning">Mark as payed</span>
+                        </a>
+                    {% endif %}
+                    {% if ad.payed == True %}
+                        <span class="label label-primary">Payed</span>
+                        {%if ad.rating_done == False %}
+                            <a href="{{ url_for('addRating', ad_id=ad.id) }}">
+                                <span class="label label-success">Add rating</span>
+                            </a>
+                        {% endif %}
+                    {% endif %}
                 </div>
              </li>
         {% endfor %}
@@ -110,9 +142,17 @@
                     <h4>Zone: </h4>{{ ad.zone }}
                 </div>
                 <div class="message-footer">
-                    <a href="{{ url_for('addRating', ad_id=ad.id) }}">
-                        <span class="label label-success">Add rating</span>
-                    </a>
+                    {% if ad.payed == False %}
+                        <span class="label label-warning">Not yet payed</span>
+                    {% endif %}
+                    {% if ad.payed == True %}
+                        <span class="label label-primary">Payed</span>
+                        {%if ad.rating_done == False %}
+                            <a href="{{ url_for('addRating', ad_id=ad.id) }}">
+                                <span class="label label-success">Add rating</span>
+                            </a>
+                        {% endif %}
+                    {% endif %}
                 </div>
              </li>
         {% endfor %}

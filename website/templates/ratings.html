@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block myContent %}
+    <div class="page-header">
+        <h1>Ratings</h1>
+    </div>
+    <br>
+    <ul class="posts">
+        {% for rating in ratings_list %}
+            <li class="post">
+                <div class="post-author">
+                    <a href="{{ url_for('other_user', id=rating.author_id) }}">{{ author_rating.first_name }} {{ author_rating.last_name }}</a>
+                </div>
+                <div class="post-date">
+                    {{ rating.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                </div>
+                <div class="post-title">
+                    <h4>Vote: </h4>{{ rating.vote }}
+                </div>
+                <div class="post-body">
+                    <h4>Comment: </h4>{{ rating.comment }}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

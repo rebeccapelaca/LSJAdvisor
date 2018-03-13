@@ -56,10 +56,10 @@
                         <a href="{{ url_for('deleteMessage', id=msg.id) }}">
                             <span class="label label-danger">Delete</span>
                         </a>
-                        {% if msg.ad.done==False %}
+                        {% if msg.ad.confirmed==False %}
                             {% if current_user.id==msg.ad.author_id %}
-                                <a href="{{ url_for('markAsDone', ad_id=msg.ad_id, other_id=msg.sender_id) }}">
-                                    <span class="label label-success">Mark as done</span>
+                                <a href="{{ url_for('confirm', ad_id=msg.ad_id, other_id=msg.sender_id) }}">
+                                    <span class="label label-info">Confirm</span>
                                 </a>
                             {% endif %}
                         {% endif %}
