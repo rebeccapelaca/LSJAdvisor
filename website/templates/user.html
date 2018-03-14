@@ -4,11 +4,11 @@
     <div class="page-header">
         {% if messages_number>0 %}
             {% if messages_number==1 %}
-                <h4>You have {{ messages_number }} unread message!</h4>
+                <h6>You have {{ messages_number }} unread message!</h6>
                 <br>
             {% endif %}
             {% if messages_number!=1 %}
-                <h4>You have {{ messages_number }} unread messages!</h4>
+                <h6>You have {{ messages_number }} unread messages!</h6>
                 <br>
             {% endif %}
         {% endif %}
@@ -107,11 +107,6 @@
                     {% endif %}
                     {% if ad.payed == True %}
                         <span class="label label-primary">Payed</span>
-                        {%if ad.rating_done == False %}
-                            <a href="{{ url_for('addRating', ad_id=ad.id) }}">
-                                <span class="label label-success">Add rating</span>
-                            </a>
-                        {% endif %}
                     {% endif %}
                 </div>
              </li>

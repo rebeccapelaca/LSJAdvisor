@@ -60,13 +60,13 @@ def user():
     size_other = len(other_ads_completed)
     messages_list = Message.query.filter_by(addressee=current_user, read=False).order_by(Message.created_at.desc()).all()
     messages_number = len(messages_list)
-    ratings_list = Rating.query.filter_by(addressee_rating=current_user).order_by(Rating.created_at.desc()).all()
+    ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
     size_ratings = len(ratings_list)
     total_votes = 0
     average_votes = 0
     for rating in ratings_list:
         total_votes += rating.vote
-    if size_ratings!=0 :
+    if size_ratings != 0 :
         average_votes = "{0:.1f}".format(total_votes/size_ratings)
     return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,\
                            ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,\
@@ -239,8 +239,9 @@ def markAsPayed(ad_id):
 def addRating(ad_id):
     form = WriteRating()
     if form.validate_on_submit():
-        rating = Rating(ad_id=ad_id, author_id=current_user.id, comment=form.comment.data, vote=form.vote.data)
         ad = Ad.query.get_or_404(ad_id)
+        rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.author_id, comment=form.comment.data,
+                        vote=form.vote.data)
         ad.rating_done = True
         db.session.add(rating)
         db.session.add(ad)
