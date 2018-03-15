@@ -16,7 +16,7 @@
         <h5>{{ current_user.email }}</h5>
         {% if size_ratings>0 %}
             <br>
-            <h6>Average rating: {{ average_votes }}</h6>
+            <h4>Average rating: {{ average_votes }}</h4>
             <a href="{{ url_for('seeRatings') }}">See all ratings</a>
         {% endif %}
     </div>
@@ -142,10 +142,13 @@
                     {% endif %}
                     {% if ad.payed == True %}
                         <span class="label label-primary">Payed</span>
-                        {%if ad.rating_done == False %}
+                        {% if ad.rating_done == False %}
                             <a href="{{ url_for('addRating', ad_id=ad.id) }}">
                                 <span class="label label-success">Add rating</span>
                             </a>
+                        {% endif %}
+                        {% else %}
+                            <span class="label label-success">Rating done</span>
                         {% endif %}
                     {% endif %}
                 </div>

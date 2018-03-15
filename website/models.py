@@ -98,3 +98,11 @@ class Rating(db.Model):
 
     def get_id(self):
         return self.id
+
+    def getAuthorFirstName(self):
+        author = User.query.filter_by(id=self.author_id).first()
+        return author.first_name
+
+    def getAuthorLastName(self):
+        author = User.query.filter_by(id=self.author_id).first()
+        return author.last_name

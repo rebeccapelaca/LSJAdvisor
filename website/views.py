@@ -75,7 +75,7 @@ def user():
 
 @app.route('/seeRatings', methods=['GET', 'POST'])
 def seeRatings():
-    ratings_list = Rating.query.filter_by(addressee_rating=current_user).order_by(Rating.created_at.desc()).all()
+    ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
     return render_template('ratings.html', ratings_list=ratings_list)
 
 @app.route('/contacts')

@@ -9,7 +9,7 @@
         {% for rating in ratings_list %}
             <li class="post">
                 <div class="post-author">
-                    <a href="{{ url_for('other_user', id=rating.author_id) }}">{{ author_rating.first_name }} {{ author_rating.last_name }}</a>
+                    <a href="{{ url_for('other_user', id=rating.author_id) }}">{{ rating.getAuthorFirstName() }} {{ rating.getAuthorLastName() }}</a>
                 </div>
                 <div class="post-date">
                     {{ rating.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
