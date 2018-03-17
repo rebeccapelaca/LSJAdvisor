@@ -1,9 +1,10 @@
 from flask_wtf import Form
-from wtforms import StringField, IntegerField, SubmitField, PasswordField, RadioField, SelectField, TextAreaField
+from wtforms import StringField, IntegerField, SubmitField, PasswordField, RadioField, SelectField, TextAreaField, FileField
 from wtforms.validators import DataRequired, NumberRange, Length, EqualTo, ValidationError
 from .models import User
 
 class RegistrationForm(Form):
+    image = FileField('Insert a profile photo', validators=[DataRequired()])
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Length(min=4)])
@@ -17,6 +18,7 @@ class RegistrationForm(Form):
             raise ValidationError('Email already exists')
 
 class EditProfileForm(Form):
+    image = FileField('Insert a profile photo', validators=[DataRequired()])
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Length(min=4)])
@@ -86,8 +88,8 @@ class EditForm(Form):
     submit = SubmitField('Edit')
 
 class WriteMessage(Form):
-    object = StringField("Object")
-    body = TextAreaField("Message")
+    object = StringField("Object", validators=[DataRequired()])
+    body = TextAreaField("Message", validators=[DataRequired()])
     submit = SubmitField('Send')
 
 class WriteRating(Form):

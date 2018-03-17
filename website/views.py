@@ -1,4 +1,5 @@
-from flask import render_template, redirect, url_for, flash, abort
+import os
+from flask import render_template, redirect, url_for, flash, abort, request
 from flask_login import login_user, login_required, logout_user, current_user
 from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating, EditProfileForm
 from .models import User, Ad, Message, Rating
@@ -275,3 +276,11 @@ def editProfile():
     form.last_name.data = profile.last_name
     form.email.data = profile.email
     return render_template('editProfile.html', form=form)
+
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    file = request.files['image']
+    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(f)
+    return render_template('index.html')

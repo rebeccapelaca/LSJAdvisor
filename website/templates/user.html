@@ -12,6 +12,7 @@
                 <br>
             {% endif %}
         {% endif %}
+        <img src="{{ current_user.image }}"></td>
         <h1>{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5>{{ current_user.email }}</h5>
         {% if size_ratings>0 %}
@@ -147,7 +148,7 @@
                                 <span class="label label-success">Add rating</span>
                             </a>
                         {% endif %}
-                        {% else %}
+                        {% if ad.rating_done == True  %}
                             <span class="label label-success">Rating done</span>
                         {% endif %}
                     {% endif %}
