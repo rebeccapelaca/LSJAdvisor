@@ -2,8 +2,8 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block myContent %}
     <div class="page-header">
-        <h1>LSJAdvisor</h1>
-        <h4>Choose if you would to need or to offer some help, specify a zone and look for ads near you</h4>
+        <h1 style="font-family: Verdana, SansSerif">LSJAdvisor</h1>
+        <h4 style="font-family: Verdana, SansSerif">Choose if you would to need or to offer some help, specify a zone and look for ads near you</h4>
     </div>
     {{ wtf.quick_form(form) }}
     <br>
@@ -17,16 +17,16 @@
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4>Title: </h4> {{ ad.title }}
+                    <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
                 </div>
                 <div class="post-category">
-                    <h4>Category: </h4>{{ ad.category }}
+                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
                 </div>
                 <div class="post-body">
-                    <h4>Description: </h4>{{ ad.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
                 </div>
                 <div class="post-zone">
-                    <h4>Zone: </h4>{{ ad.zone }}
+                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
                 </div>
                 <div class="post-footer">
                     {% if current_user != ad.author %}
@@ -40,7 +40,7 @@
         {% endfor %}
     </ul>
     <div>
-        <h4>If you don't find what do you want, write a new ad</h4>
+        <h4 style="font-family: Verdana, SansSerif">If you don't find what you want, write a new ad</h4>
         <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
     </div>
 {% endblock %}

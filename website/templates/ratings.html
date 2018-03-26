@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block myContent %}
     <div class="page-header">
-        <h1>Ratings</h1>
+        <h1 style="font-family: Verdana, SansSerif">Ratings</h1>
     </div>
     <br>
     <ul class="posts">
@@ -15,10 +15,10 @@
                     {{ rating.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4>Vote: </h4>{{ rating.vote }}
+                    <h4 style="font-family: Verdana, SansSerif">Vote: </h4>{{ rating.vote }}
                 </div>
                 <div class="post-body">
-                    <h4>Comment: </h4>{{ rating.comment }}
+                    <h4 style="font-family: Verdana, SansSerif">Comment: </h4>{{ rating.comment }}
                 </div>
             </li>
         {% endfor %}

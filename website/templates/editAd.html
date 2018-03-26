@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block myContent %}
     <div class="page-header">
-        <h2>Edit ad</h2>
+        <h2 style="font-family: Verdana, SansSerif">Edit ad</h2>
     </div>
     {{ wtf.quick_form(form) }}
     <br>
@@ -15,16 +15,16 @@
                 {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
             </div>
             <div class="post-title">
-                <h4>Title: </h4> {{ ad.title }}
+                <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
             </div>
             <div class="post-category">
-                <h4>Category: </h4>{{ ad.category }}
+                <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
             </div>
             <div class="post-body">
-                <h4>Description: </h4>{{ ad.body }}
+                <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
             </div>
             <div class="post-zone">
-                <h4>Zone: </h4>{{ ad.zone }}
+                <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
             </div>
         </li>
     </ul>

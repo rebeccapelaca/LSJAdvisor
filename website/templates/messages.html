@@ -2,12 +2,12 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block myContent %}
     <div class="page-header">
-        <h1>Messages</h1>
+        <h1 style="font-family: Verdana, SansSerif">Messages</h1>
     </div>
     <br>
-    <h3>Received messages</h3>
+    <h3 style="font-family: Verdana, SansSerif">Received messages</h3>
     {% if size_msg_received==0 %}
-        <h4>No message received</h4>
+        <h4 style="font-family: Verdana, SansSerif">No message received</h4>
     {% endif %}
     <ul class="messages">
         {% for msg in received %}
@@ -20,10 +20,10 @@
                         {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                     </div>
                     <div class="message-title">
-                        <h4>Object: </h4> {{ msg.object }}
+                        <h4 style="font-family: Verdana, SansSerif">Object: </h4> {{ msg.object }}
                     </div>
                     <div class="message-body">
-                        <h4>Message: </h4> {{ msg.body }}
+                        <h4 style="font-family: Verdana, SansSerif">Message: </h4> {{ msg.body }}
                     </div>
                     <div class="message-footer">
                         <a href="{{ url_for('markAsRead', id=msg.id) }}">
@@ -44,10 +44,10 @@
                         {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                     </div>
                     <div class="message-title">
-                        <h4>Object: </h4> {{ msg.object }}
+                        <h4 style="font-family: Verdana, SansSerif">Object: </h4> {{ msg.object }}
                     </div>
                     <div class="message-body">
-                        <h4>Message: </h4> {{ msg.body }}
+                        <h4 style="font-family: Verdana, SansSerif">Message: </h4> {{ msg.body }}
                     </div>
                     <div class="message-footer">
                         <a href="{{ url_for('writeMessage', id=msg.sender_id, ad_id=msg.ad_id) }}">
@@ -71,7 +71,7 @@
     <br>
     <h3>Sent messages</h3>
         {% if size_msg_sent==0 %}
-        <h4>No message sent</h4>
+        <h4 style="font-family: Verdana, SansSerif">No message sent</h4>
     {% endif %}
     <ul class="messages">
         {% for msg in sent %}
@@ -83,10 +83,10 @@
                     {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="message-title">
-                    <h4>Object: </h4> {{ msg.object }}
+                    <h4 style="font-family: Verdana, SansSerif">Object: </h4> {{ msg.object }}
                 </div>
                 <div class="message-body">
-                    <h4>Message: </h4> {{ msg.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Message: </h4> {{ msg.body }}
                 </div>
             </li>
         {% endfor %}

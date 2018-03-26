@@ -2,8 +2,8 @@
 {% block title %}{{ author_ads.email }}{% endblock %}
 {% block myContent %}
     <div class="page-header">
-        <h1>{{ author_ads.first_name }} {{ author_ads.last_name }}</h1>
-        <h5>{{ author_ads.email }}</h5>
+        <h1 style="font-family: Verdana, SansSerif">{{ author_ads.first_name }} {{ author_ads.last_name }}</h1>
+        <h5 style="font-family: Verdana, SansSerif">{{ author_ads.email }}</h5>
     </div>
     <div>
         {% if current_user == author_ads %}
@@ -13,7 +13,7 @@
     </div>
     <br>
     {% if size>0 %}
-        <h4>Ads:</h4>
+        <h4 style="font-family: Verdana, SansSerif">Ads:</h4>
     {% endif %}
     <ul class="posts">
         {% for ad in ads %}
@@ -25,16 +25,16 @@
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4>Title: </h4> {{ ad.title }}
+                    <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
                 </div>
                 <div class="post-category">
-                    <h4>Category: </h4>{{ ad.category }}
+                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
                 </div>
                 <div class="post-body">
-                    <h4>Description: </h4>{{ ad.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
                 </div>
                 <div class="post-zone">
-                    <h4>Zone: </h4>{{ ad.zone }}
+                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
                 </div>
                 <div class="post-footer">
                     {% if current_user == author_ads %}
