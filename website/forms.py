@@ -1,10 +1,10 @@
-from flask_wtf import Form
-from wtforms import StringField, IntegerField, SubmitField, PasswordField, RadioField, SelectField, TextAreaField, FileField
-from wtforms.validators import DataRequired, NumberRange, Length, EqualTo, ValidationError
+from flask_wtf import Form, FlaskForm
+from flask_wtf.file import FileRequired
+from wtforms import StringField, SubmitField, PasswordField, RadioField, SelectField, TextAreaField, FileField
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from .models import User
 
 class RegistrationForm(Form):
-    image = FileField('Insert a profile photo', validators=[DataRequired()])
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Length(min=4)])
@@ -17,8 +17,11 @@ class RegistrationForm(Form):
         if user is not None:
             raise ValidationError('Email already exists')
 
+class UploadForm(FlaskForm):
+    photo = FileField(validators=[FileRequired('Choose a file!')])
+    submit = SubmitField('Upload')
+
 class EditProfileForm(Form):
-    image = FileField('Insert a profile photo', validators=[DataRequired()])
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Length(min=4)])

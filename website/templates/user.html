@@ -12,9 +12,10 @@
                 <br>
             {% endif %}
         {% endif %}
-        <img src="{{ current_user.image }}"></td>
+        <img src="static/{{ current_user.email }}" height="150" width="150">
         <h1 style="font-family: Verdana, SansSerif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5 style="font-family: Verdana, SansSerif">{{ current_user.email }}</h5>
+        <a href="{{ url_for('upload') }}">Upload profile photo</a>
         {% if size_ratings>0 %}
             <br>
             <h4 style="font-family: Verdana, SansSerif">Average rating: {{ average_votes }}</h4>

@@ -1,10 +1,12 @@
 import os
 from flask import render_template, redirect, url_for, flash, abort, request
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating, EditProfileForm
+from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating, \
+    EditProfileForm, UploadForm
 from .models import User, Ad, Message, Rating
 from werkzeug.security import check_password_hash, generate_password_hash
-from . import app, db, login_manager
+from . import app, db, login_manager, APP_ROOT
+
 
 @login_manager.user_loader
 def get_user(email):
@@ -114,8 +116,11 @@ def findAd():
     form = FindForm()
     ads = []
     if form.validate_on_submit():
-        ads = Ad.query.filter_by(title=form.title.data, zone=form.zone.data, category=form.category.data)\
+        ads = Ad.query.filter_by(title=form.title.data, zone=form.zone.data, category=form.category.data) \
                 .order_by(Ad.created_at.desc()).all()
+        return render_template('findAd.html', form=form, ads=ads)
+    else:
+        flash('All field are required', 'warning')
     return render_template('findAd.html', form=form, ads=ads)
 
 @app.route('/editAd/<int:id>', methods=['GET', 'POST'])
@@ -277,10 +282,25 @@ def editProfile():
     form.email.data = profile.email
     return render_template('editProfile.html', form=form)
 
+@app.route('/upload')
+def upload():
+    return render_template("upload.html")
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    file = request.files['image']
-    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(f)
-    return render_template('index.html')
+@app.route('/upload_image/<email>', methods=["POST"])
+def upload_image(email):
+    target = os.path.join(APP_ROOT, "static")
+    print(target)
+
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
+    for f in request.files.getlist("file"):
+        print(f)
+        destination = "/".join([target, email])
+        print destination
+        f.save(destination)
+        flash('The photo has been uploaded', 'success')
+    return render_template("homepage.html")
+
+if __name__=="__main__":
+    app.run(port=4555, debug=True)
