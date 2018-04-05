@@ -18,7 +18,6 @@ mail = Mail(app)
 
 @login_manager.user_loader
 def get_user(email):
-    '''This is needed by LoginManager to retrieve a User instance based on its ID (in this case, username)'''
     return User.query.filter_by(email=email).first()
 
 @app.before_first_request
