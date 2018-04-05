@@ -12,7 +12,7 @@
                 <br>
             {% endif %}
         {% endif %}
-        <img src="static/{{ current_user.email }}" height="150" width="150">
+        <img src="static/{{ current_user.email }}" alt="Profile photo" height="160" width="150">
         <h1 style="font-family: Verdana, SansSerif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5 style="font-family: Verdana, SansSerif">{{ current_user.email }}</h5>
         <a href="{{ url_for('upload') }}">Upload profile photo</a>
@@ -25,7 +25,7 @@
     <br>
     <div>
         <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
-            <a class="btn btn-default" href="{{ url_for('findAd') }}">Find</a>
+        <a class="btn btn-default" href="{{ url_for('findAd') }}">Find</a>
     </div>
     <div class="footer">
         <a href="{{ url_for('editProfile') }}">
@@ -46,16 +46,20 @@
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
+                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
+                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
+                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="post-footer">
                     {% if current_user == ad.author %}
@@ -90,16 +94,20 @@
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
+                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
+                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
+                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="message-footer">
                     {% if ad.payed == False %}
@@ -127,16 +135,20 @@
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
+                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
+                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
+                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="message-footer">
                     {% if ad.payed == False %}

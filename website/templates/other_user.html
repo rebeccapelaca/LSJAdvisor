@@ -25,16 +25,20 @@
                     {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4> {{ ad.title }}
+                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>{{ ad.category }}
+                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>{{ ad.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>{{ ad.zone }}
+                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="post-footer">
                     {% if current_user == author_ads %}

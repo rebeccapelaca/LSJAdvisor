@@ -63,7 +63,7 @@ class Ad(db.Model):
         author = User.query.filter_by(id=self.author_id).first()
         return author.last_name
 
-class Message(db.Model):
+class MessageChat(db.Model):
     __tablename__= 'messages'
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))

@@ -10,6 +10,7 @@ app = Flask(__name__)
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 bootstrap = Bootstrap(app)
+
 app.config['SECRET_KEY'] = 'my secret key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 db = SQLAlchemy(app)

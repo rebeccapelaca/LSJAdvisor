@@ -7,6 +7,6 @@
     </div>
      <form id="upload-form" action="{{ url_for('upload_image', email=current_user.email) }}" method="POST" enctype="multipart/form-data">
         <input type="file" name="file" accept="image/*">
-        <input type="submit" value="send">
+        <input type="submit" value="Ok">
     </form>
 {% endblock %}

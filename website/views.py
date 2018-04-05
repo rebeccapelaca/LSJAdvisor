@@ -1,12 +1,20 @@
 import os
+from flask_mail import Mail, Message
 from flask import render_template, redirect, url_for, flash, abort, request
 from flask_login import login_user, login_required, logout_user, current_user
 from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, WriteMessage, WriteRating, \
-    EditProfileForm, UploadForm
-from .models import User, Ad, Message, Rating
+    EditProfileForm
+from .models import User, Ad, MessageChat, Rating
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import app, db, login_manager, APP_ROOT
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'lsjadvisor@gmail.com'
+app.config['MAIL_PASSWORD'] = 'lsjadvisor2018'
+app.config['MAIL_DEFAULT_SENDER'] = 'LSJAdvisor'
+mail = Mail(app)
 
 @login_manager.user_loader
 def get_user(email):
@@ -31,6 +39,9 @@ def register():
         p.password = form.password.data
         db.session.add(p)
         db.session.commit()
+        html = render_template('email.html', p=p)
+        subject = "Welcome to LSJAdvisor!"
+        send_email(p.email, subject, html)
         flash('User successfully registered', 'success')
         return redirect(url_for('login'))
 
@@ -40,16 +51,13 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # we are certain user exists because of the username validator of LoginForm
         user = get_user(form.email.data)
         if user.check_password(form.password.data):
-            # login the user, then redirect to his user page
             login_user(user)
             flash('User logged in!', 'success')
             return redirect(url_for('user'))
         else:
             flash('Incorrect password!', 'danger')
-
     return render_template('login.html', form=form)
 
 @app.route('/user')
@@ -61,7 +69,7 @@ def user():
     size = len(ads_completed)
     other_ads_completed = Ad.query.filter_by(other=current_user, done=True).order_by(Ad.created_at.desc()).all()
     size_other = len(other_ads_completed)
-    messages_list = Message.query.filter_by(addressee=current_user, read=False).order_by(Message.created_at.desc()).all()
+    messages_list = MessageChat.query.filter_by(addressee=current_user, read=False).order_by(MessageChat.created_at.desc()).all()
     messages_number = len(messages_list)
     ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
     size_ratings = len(ratings_list)
@@ -69,7 +77,7 @@ def user():
     average_votes = 0
     for rating in ratings_list:
         total_votes += rating.vote
-    if size_ratings != 0 :
+    if size_ratings != 0:
         average_votes = "{0:.1f}".format(total_votes/size_ratings)
     return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,\
                            ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,\
@@ -119,8 +127,6 @@ def findAd():
         ads = Ad.query.filter_by(title=form.title.data, zone=form.zone.data, category=form.category.data) \
                 .order_by(Ad.created_at.desc()).all()
         return render_template('findAd.html', form=form, ads=ads)
-    else:
-        flash('All field are required', 'warning')
     return render_template('findAd.html', form=form, ads=ads)
 
 @app.route('/editAd/<int:id>', methods=['GET', 'POST'])
@@ -171,7 +177,7 @@ def writeMessage(id, ad_id):
     form = WriteMessage()
     if form.validate_on_submit():
         addressee = User.query.filter_by(id=id).first()
-        message = Message(ad_id=ad_id, sender=current_user._get_current_object(), body=form.body.data, addressee=addressee, read=False, object=form.object.data)
+        message = MessageChat(ad_id=ad_id, sender=current_user._get_current_object(), body=form.body.data, addressee=addressee, read=False, object=form.object.data)
         db.session.add(message)
         db.session.commit()
         flash('Message successfully sent!', 'success')
@@ -181,8 +187,8 @@ def writeMessage(id, ad_id):
 @app.route('/messages')
 @login_required
 def messages():
-    received = Message.query.filter_by(addressee_id=current_user.id).order_by(Message.created_at.desc()).all()
-    sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.created_at.desc()).all()
+    received = MessageChat.query.filter_by(addressee_id=current_user.id).order_by(MessageChat.created_at.desc()).all()
+    sent = MessageChat.query.filter_by(sender_id=current_user.id).order_by(MessageChat.created_at.desc()).all()
     size_msg_received = len(received)
     size_msg_sent = len(sent)
     return render_template('messages.html', received=received, sent=sent, size_msg_received=size_msg_received, size_msg_sent=size_msg_sent)
@@ -190,7 +196,7 @@ def messages():
 @app.route('/markAsRead/<int:id>')
 @login_required
 def markAsRead(id):
-    msg = Message.query.get_or_404(id)
+    msg = MessageChat.query.get_or_404(id)
     msg.read = True
     db.session.add(msg)
     db.session.commit()
@@ -199,7 +205,7 @@ def markAsRead(id):
 @app.route('/deleteMessage/<int:id>', methods=['GET', 'POST'])
 @login_required
 def deleteMessage(id):
-    msg = Message.query.get_or_404(id)
+    msg = MessageChat.query.get_or_404(id)
     db.session.delete(msg)
     db.session.commit()
     flash('The message has been removed', 'success')
@@ -282,6 +288,14 @@ def editProfile():
     form.email.data = profile.email
     return render_template('editProfile.html', form=form)
 
+def send_email(to, subject, template):
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender=app.config['MAIL_DEFAULT_SENDER'])
+    mail.send(msg)
+
 @app.route('/upload')
 def upload():
     return render_template("upload.html")
@@ -289,15 +303,10 @@ def upload():
 @app.route('/upload_image/<email>', methods=["POST"])
 def upload_image(email):
     target = os.path.join(APP_ROOT, "static")
-    print(target)
-
     if not os.path.isdir(target):
         os.mkdir(target)
-
     for f in request.files.getlist("file"):
-        print(f)
         destination = "/".join([target, email])
-        print destination
         f.save(destination)
         flash('The photo has been uploaded', 'success')
     return render_template("homepage.html")

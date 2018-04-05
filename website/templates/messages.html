@@ -20,10 +20,12 @@
                         {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                     </div>
                     <div class="message-title">
-                        <h4 style="font-family: Verdana, SansSerif">Object: </h4> {{ msg.object }}
+                        <h4 style="font-family: Verdana, SansSerif">Object: </h4>
+                        <p style="padding-left: 10px">{{ msg.object }}</p>
                     </div>
                     <div class="message-body">
-                        <h4 style="font-family: Verdana, SansSerif">Message: </h4> {{ msg.body }}
+                        <h4 style="font-family: Verdana, SansSerif">Message: </h4>
+                        <p style="padding-left: 10px">{{ msg.body }}</p>
                     </div>
                     <div class="message-footer">
                         <a href="{{ url_for('markAsRead', id=msg.id) }}">
@@ -44,10 +46,12 @@
                         {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                     </div>
                     <div class="message-title">
-                        <h4 style="font-family: Verdana, SansSerif">Object: </h4> {{ msg.object }}
+                        <h4 style="font-family: Verdana, SansSerif">Object: </h4>
+                        <p style="padding-left: 10px">{{ msg.object }}</p>
                     </div>
                     <div class="message-body">
-                        <h4 style="font-family: Verdana, SansSerif">Message: </h4> {{ msg.body }}
+                        <h4 style="font-family: Verdana, SansSerif">Message: </h4>
+                        <p style="padding-left: 10px">{{ msg.body }}</p>
                     </div>
                     <div class="message-footer">
                         <a href="{{ url_for('writeMessage', id=msg.sender_id, ad_id=msg.ad_id) }}">
@@ -83,10 +87,12 @@
                     {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
                 </div>
                 <div class="message-title">
-                    <h4 style="font-family: Verdana, SansSerif">Object: </h4> {{ msg.object }}
+                    <h4 style="font-family: Verdana, SansSerif">Object: </h4>
+                    <p style="padding-left: 10px">{{ msg.object }}</p>
                 </div>
                 <div class="message-body">
-                    <h4 style="font-family: Verdana, SansSerif">Message: </h4> {{ msg.body }}
+                    <h4 style="font-family: Verdana, SansSerif">Message: </h4>
+                    <p style="padding-left: 10px">{{ msg.body }}</p>
                 </div>
             </li>
         {% endfor %}
