@@ -12,7 +12,7 @@
                 <br>
             {% endif %}
         {% endif %}
-        <img src="static/{{ current_user.email }}" alt="Profile photo" height="160" width="150">
+        <img src="static/{{ current_user.email }}" alt="" height="160" width="150">
         <h1 style="font-family: Verdana, SansSerif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5 style="font-family: Verdana, SansSerif">{{ current_user.email }}</h5>
         <a href="{{ url_for('upload') }}">Upload profile photo</a>
@@ -33,6 +33,9 @@
         </a>
     </div>
     <br>
+    {% if size_not==0 %}
+        <h4 style="font-family: Verdana, SansSerif">No ads to be completed</h4>
+    {% endif %}
     {% if size_not>0 %}
         <h4 style="font-family: Verdana, SansSerif">Ads to be completed:</h4>
     {% endif %}
@@ -81,6 +84,9 @@
             </li>
         {% endfor %}
     </ul>
+    {% if size==0 %}
+        <h4 style="font-family: Verdana, SansSerif">No ads completed</h4>
+    {% endif %}
     {% if size>0 %}
         <h4 style="font-family: Verdana, SansSerif">Ads completed:</h4>
     {% endif %}
@@ -117,13 +123,24 @@
                     {% endif %}
                     {% if ad.payed == True %}
                         <span class="label label-primary">Payed</span>
+                        {% if ad.rating_done == False %}
+                            <a href="{{ url_for('addRatingTwo', ad_id=ad.id) }}">
+                                <span class="label label-success">Add rating</span>
+                            </a>
+                        {% endif %}
+                        {% if ad.rating_done == True %}
+                            <span class="label label-success">Rating done</span>
+                        {% endif %}
                     {% endif %}
                 </div>
              </li>
         {% endfor %}
     </ul>
+    {% if size_other==0 %}
+        <h4 style="font-family: Verdana, SansSerif">No ads I answered</h4>
+    {% endif %}
     {% if size_other>0 %}
-        <h4 style="font-family: Verdana, SansSerif">Other ads completed:</h4>
+        <h4 style="font-family: Verdana, SansSerif">Ads to which I answered:</h4>
     {% endif %}
     <ul class="posts">
         {% for ad in other_ads_completed %}
@@ -157,7 +174,7 @@
                     {% if ad.payed == True %}
                         <span class="label label-primary">Payed</span>
                         {% if ad.rating_done == False %}
-                            <a href="{{ url_for('addRating', ad_id=ad.id) }}">
+                            <a href="{{ url_for('addRatingOne', ad_id=ad.id) }}">
                                 <span class="label label-success">Add rating</span>
                             </a>
                         {% endif %}

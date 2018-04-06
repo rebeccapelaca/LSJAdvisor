@@ -6,6 +6,7 @@ from .forms import LoginForm, RegistrationForm, WriteForm, FindForm, EditForm, W
     EditProfileForm
 from .models import User, Ad, MessageChat, Rating
 from werkzeug.security import check_password_hash, generate_password_hash
+from itsdangerous import URLSafeTimedSerializer
 from . import app, db, login_manager, APP_ROOT
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -14,7 +15,40 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'lsjadvisor@gmail.com'
 app.config['MAIL_PASSWORD'] = 'lsjadvisor2018'
 app.config['MAIL_DEFAULT_SENDER'] = 'LSJAdvisor'
+
 mail = Mail(app)
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt='email-confirm')
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt='email-confirm',
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
+
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+    user = User.query.filter_by(email=email).first_or_404()
+    if user.confirmed:
+        flash('Account already confirmed. Please login.', 'success')
+    else:
+        user.confirmed = True
+        db.session.add(user)
+        db.session.commit()
+        flash('You have confirmed your account. Thanks!', 'success')
+    return redirect(url_for('login'))
 
 @login_manager.user_loader
 def get_user(email):
@@ -32,18 +66,20 @@ def index():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        p = User(first_name=form.first_name.data,
+        user = User(first_name=form.first_name.data,
                     last_name=form.last_name.data,
-                    email=form.email.data)
-        p.password = form.password.data
-        db.session.add(p)
+                    email=form.email.data,
+                    confirmed=False)
+        user.password = form.password.data
+        db.session.add(user)
         db.session.commit()
-        html = render_template('email.html', p=p)
-        subject = "Welcome to LSJAdvisor!"
-        send_email(p.email, subject, html)
-        flash('User successfully registered', 'success')
-        return redirect(url_for('login'))
-
+        token = generate_confirmation_token(user.email)
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('email.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(user.email, subject, html)
+        flash('A confirmation email has been sent via email', 'success')
+        return redirect(url_for('index'))
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -245,13 +281,28 @@ def markAsPayed(ad_id):
     flash('The ad has been marked as payed', 'success')
     return redirect(url_for('user'))
 
-@app.route('/addRating/<int:ad_id>', methods=['GET', 'POST'])
+@app.route('/addRatingOne/<int:ad_id>', methods=['GET', 'POST'])
 @login_required
-def addRating(ad_id):
+def addRatingOne(ad_id):
     form = WriteRating()
     if form.validate_on_submit():
         ad = Ad.query.get_or_404(ad_id)
         rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.author_id, comment=form.comment.data,
+                        vote=form.vote.data)
+        ad.rating_done = True
+        db.session.add(rating)
+        db.session.add(ad)
+        db.session.commit()
+        flash('Rating successfully added!', 'success')
+    return render_template('writeRating.html', form=form)
+
+@app.route('/addRatingTwo/<int:ad_id>', methods=['GET', 'POST'])
+@login_required
+def addRatingTwo(ad_id):
+    form = WriteRating()
+    if form.validate_on_submit():
+        ad = Ad.query.get_or_404(ad_id)
+        rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.other_user_id, comment=form.comment.data,
                         vote=form.vote.data)
         ad.rating_done = True
         db.session.add(rating)

@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String)
     email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
+    confirmed = db.Column(db.Boolean)
 
     def get_id(self):
         return self.email
