@@ -4,21 +4,23 @@
     <div class="page-header">
         {% if messages_number>0 %}
             {% if messages_number==1 %}
-                <h6 style="font-family: Verdana, SansSerif">You have {{ messages_number }} unread message!</h6>
+                <h6 style="font-family: Verdana,sans-serif; font-size: large">
+                    You have {{ messages_number }} unread message!</h6>
                 <br>
             {% endif %}
             {% if messages_number!=1 %}
-                <h6 style="font-family: Verdana, SansSerif">You have {{ messages_number }} unread messages!</h6>
+                <h6 style="font-family: Verdana,sans-serif">You have {{ messages_number }} unread messages!</h6>
                 <br>
             {% endif %}
         {% endif %}
-        <img src="static/{{ current_user.email }}" alt="" height="160" width="150">
-        <h1 style="font-family: Verdana, SansSerif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
-        <h5 style="font-family: Verdana, SansSerif">{{ current_user.email }}</h5>
+        <img src="/static/{{ current_user.email }}" alt="" height="190" width="150">
+        <h1 style="font-family: Verdana,sans-serif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+        <h5 style="font-family: Verdana,sans-serif">{{ current_user.email }}</h5>
         <a href="{{ url_for('upload') }}">Upload profile photo</a>
+        <br>
         {% if size_ratings>0 %}
             <br>
-            <h4 style="font-family: Verdana, SansSerif">Average rating: {{ average_votes }}</h4>
+            <h4 style="font-family: Verdana,sans-serif">Average rating: {{ average_votes }}</h4>
             <a href="{{ url_for('seeRatings') }}">See all ratings</a>
         {% endif %}
     </div>
@@ -34,10 +36,10 @@
     </div>
     <br>
     {% if size_not==0 %}
-        <h4 style="font-family: Verdana, SansSerif">No ads to be completed</h4>
+        <h4 style="font-family: Verdana,sans-serif; font-style: italic; font-size: small">No ad posted</h4>
     {% endif %}
     {% if size_not>0 %}
-        <h4 style="font-family: Verdana, SansSerif">Ads to be completed:</h4>
+        <h4 style="font-family: Verdana,sans-serif">Ads posted:</h4>
     {% endif %}
     <ul class="posts">
         {% for ad in ads_not_completed %}
@@ -46,49 +48,52 @@
                     <a href="{{ url_for('user') }}">{{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
                 </div>
                 <div class="post-date">
-                    {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                    {{ ad.created_at | datetimeformat('%B %d, %Y')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Title: </h4>
                     <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Category: </h4>
                     <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Description: </h4>
                     <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Zone: </h4>
                     <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="post-footer">
                     {% if current_user == ad.author %}
-                        <a href="{{ url_for('editAd', id=ad.id) }}">
-                            <span class="label label-primary">Edit</span>
-                        </a>
-                        <a href="{{ url_for('deleteAd', id=ad.id) }}">
-                            <span class="label label-danger">Delete</span>
-                        </a>
                         {% if ad.done==False %}
                             {% if ad.confirmed==True %}
-                                <a href="{{ url_for('markAsDone', ad_id=ad.id) }}">
-                                    <span class="label label-success">Mark as done</span>
+                                <span class="label label-info">Confirmed</span>
+                            <a href="{{ url_for('markAsDone', ad_id=ad.id) }}">
+                                <span class="label label-success">Mark as done</span>
+                            </a>
+                            {% endif %}
+                            {% if ad.confirmed==False %}
+                                <a href="{{ url_for('editAd', id=ad.id) }}">
+                                    <span class="label label-primary">Edit</span>
                                 </a>
                             {% endif %}
                         {% endif %}
+                        <a href="{{ url_for('deleteAd', id=ad.id) }}">
+                            <span class="label label-danger">Delete</span>
+                        </a>
                     {% endif %}
                 </div>
             </li>
         {% endfor %}
     </ul>
     {% if size==0 %}
-        <h4 style="font-family: Verdana, SansSerif">No ads completed</h4>
+        <h4 style="font-family: Verdana,sans-serif; font-style: italic; font-size: small">No own ad completed</h4>
     {% endif %}
     {% if size>0 %}
-        <h4 style="font-family: Verdana, SansSerif">Ads completed:</h4>
+        <h4 style="font-family: Verdana,sans-serif">Own ads completed:</h4>
     {% endif %}
     <ul class="posts">
         {% for ad in ads_completed %}
@@ -97,22 +102,22 @@
                     <a href="{{ url_for('user') }}">{{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
                 </div>
                 <div class="post-date">
-                    {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                    {{ ad.created_at | datetimeformat('%B %d, %Y')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Title: </h4>
                     <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Category: </h4>
                     <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Description: </h4>
                     <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Zone: </h4>
                     <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="message-footer">
@@ -123,12 +128,12 @@
                     {% endif %}
                     {% if ad.payed == True %}
                         <span class="label label-primary">Payed</span>
-                        {% if ad.rating_done == False %}
+                        {% if ad.rating_done_two == False %}
                             <a href="{{ url_for('addRatingTwo', ad_id=ad.id) }}">
                                 <span class="label label-success">Add rating</span>
                             </a>
                         {% endif %}
-                        {% if ad.rating_done == True %}
+                        {% if ad.rating_done_two == True %}
                             <span class="label label-success">Rating done</span>
                         {% endif %}
                     {% endif %}
@@ -137,50 +142,56 @@
         {% endfor %}
     </ul>
     {% if size_other==0 %}
-        <h4 style="font-family: Verdana, SansSerif">No ads I answered</h4>
+        <h4 style="font-family: Verdana,sans-serif; font-style: italic; font-size: small">No ad I answer to</h4>
     {% endif %}
     {% if size_other>0 %}
-        <h4 style="font-family: Verdana, SansSerif">Ads to which I answered:</h4>
+        <h4 style="font-family: Verdana,sans-serif">Ads I answer to:</h4>
     {% endif %}
     <ul class="posts">
         {% for ad in other_ads_completed %}
             <li class="post">
                 <div class="post-author">
-                    <a href="{{ url_for('user') }}">{{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
+                    <a href="{{ url_for('other_user', id=ad.id) }}">
+                        {{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
                 </div>
                 <div class="post-date">
-                    {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                    {{ ad.created_at | datetimeformat('%B %d, %Y')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Title: </h4>
                     <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Category: </h4>
                     <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Description: </h4>
                     <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Zone: </h4>
                     <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="message-footer">
-                    {% if ad.payed == False %}
-                        <span class="label label-warning">Not yet payed</span>
+                    {% if ad.done == True %}
+                        {% if ad.payed == False %}
+                            <span class="label label-warning">Not yet payed</span>
+                        {% endif %}
+                        {% if ad.payed == True %}
+                            <span class="label label-primary">Payed</span>
+                            {% if ad.rating_done_one == False %}
+                                <a href="{{ url_for('addRatingOne', ad_id=ad.id) }}">
+                                    <span class="label label-success">Add rating</span>
+                                </a>
+                            {% endif %}
+                            {% if ad.rating_done_one == True  %}
+                                <span class="label label-success">Rating done</span>
+                            {% endif %}
+                        {% endif %}
                     {% endif %}
-                    {% if ad.payed == True %}
-                        <span class="label label-primary">Payed</span>
-                        {% if ad.rating_done == False %}
-                            <a href="{{ url_for('addRatingOne', ad_id=ad.id) }}">
-                                <span class="label label-success">Add rating</span>
-                            </a>
-                        {% endif %}
-                        {% if ad.rating_done == True  %}
-                            <span class="label label-success">Rating done</span>
-                        {% endif %}
+                    {% if ad.done == False %}
+                        <span class="label label-info">Confirmed</span>
                     {% endif %}
                 </div>
              </li>

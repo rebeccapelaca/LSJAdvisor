@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block myContent %}
     <div class="page-header">
-        <h2 style="font-family: Verdana, SansSerif">Edit ad</h2>
+        <h2 style="font-family: Verdana,sans-serif">Edit ad</h2>
     </div>
     {{ wtf.quick_form(form) }}
     <br>
@@ -12,22 +12,22 @@
                 <a href="{{ url_for('user') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a>
             </div>
             <div class="post-date">
-                {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                {{ ad.created_at | datetimeformat('%B %d, %Y')}}
             </div>
             <div class="post-title">
-                <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                <h4 style="font-family: Verdana,sans-serif">Title: </h4>
                 <p style="padding-left: 10px">{{ ad.title }}</p>
             </div>
             <div class="post-category">
-                <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                <h4 style="font-family: Verdana,sans-serif">Category: </h4>
                 <p style="padding-left: 10px">{{ ad.category }}</p>
             </div>
             <div class="post-body">
-                <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                <h4 style="font-family: Verdana,sans-serif">Description: </h4>
                 <p style="padding-left: 10px">{{ ad.body }}</p>
             </div>
             <div class="post-zone">
-                <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                <h4 style="font-family: Verdana,sans-serif">Zone: </h4>
                 <p style="padding-left: 10px">{{ ad.zone }}</p>
             </div>
         </li>

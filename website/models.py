@@ -3,6 +3,7 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -26,6 +27,7 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class Ad(db.Model):
     __tablename__ = 'ads'
     id = db.Column(db.Integer, primary_key=True)
@@ -38,10 +40,11 @@ class Ad(db.Model):
     other_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     confirmed = db.Column(db.Boolean)
     done = db.Column(db.Boolean)
-    ratings = db.relationship('Rating', backref='author', lazy='dynamic')
-    rating_done = db.Column(db.Boolean)
+    rating_done_one = db.Column(db.Boolean)
+    rating_done_two = db.Column(db.Boolean)
     payed = db.Column(db.Boolean)
 
+    rating = db.relationship('Rating', backref='rating', lazy='dynamic')
     author = db.relationship('User', backref='author', foreign_keys=[author_id])
     other = db.relationship('User', backref='other', foreign_keys=[other_user_id])
 
@@ -64,8 +67,9 @@ class Ad(db.Model):
         author = User.query.filter_by(id=self.author_id).first()
         return author.last_name
 
+
 class MessageChat(db.Model):
-    __tablename__= 'messages'
+    __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     addressee_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -82,6 +86,7 @@ class MessageChat(db.Model):
     def get_id(self):
         return self.id
 
+
 class Rating(db.Model):
     __tablename__ = 'ratings'
     id = db.Column(db.Integer, primary_key=True)
@@ -95,7 +100,6 @@ class Rating(db.Model):
     author_rating = db.relationship('User', backref='author_rating', foreign_keys=[author_id])
     addressee_rating = db.relationship('User', backref='addressee_rating', foreign_keys=[addressee_id])
     ad_rating = db.relationship('Ad', backref='ad_rating', foreign_keys=[ad_id])
-
 
     def get_id(self):
         return self.id

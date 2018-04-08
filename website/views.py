@@ -36,16 +36,17 @@ def confirm_token(token, expiration=3600):
 
 @app.route('/confirm/<token>')
 def confirm_email(token):
+    email = ""
     try:
         email = confirm_token(token)
     except:
-        flash('The confirmation link is invalid or has expired.', 'danger')
-    user = User.query.filter_by(email=email).first_or_404()
-    if user.confirmed:
+        flash('The confirmation link is invalid or has expired', 'danger')
+    u = User.query.filter_by(email=email).first_or_404()
+    if u.confirmed:
         flash('Account already confirmed. Please login.', 'success')
     else:
-        user.confirmed = True
-        db.session.add(user)
+        u.confirmed = True
+        db.session.add(u)
         db.session.commit()
         flash('You have confirmed your account. Thanks!', 'success')
     return redirect(url_for('login'))
@@ -66,18 +67,16 @@ def index():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(first_name=form.first_name.data,
-                    last_name=form.last_name.data,
-                    email=form.email.data,
-                    confirmed=False)
-        user.password = form.password.data
-        db.session.add(user)
+        u = User(first_name=form.first_name.data, last_name=form.last_name.data,
+                 email=form.email.data, confirmed=False)
+        u.password = form.password.data
+        db.session.add(u)
         db.session.commit()
-        token = generate_confirmation_token(user.email)
+        token = generate_confirmation_token(u.email)
         confirm_url = url_for('confirm_email', token=token, _external=True)
         html = render_template('email.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
-        send_email(user.email, subject, html)
+        send_email(u.email, subject, html)
         flash('A confirmation email has been sent via email', 'success')
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
@@ -86,13 +85,17 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = get_user(form.email.data)
-        if user.check_password(form.password.data):
-            login_user(user)
-            flash('User logged in!', 'success')
-            return redirect(url_for('user'))
+        u = get_user(form.email.data)
+        if not u.confirmed:
+            flash('Please confirm your email address before login', 'danger')
+            return redirect(url_for('login'))
         else:
-            flash('Incorrect password!', 'danger')
+            if u.check_password(form.password.data):
+                login_user(u)
+                flash('User logged in!', 'success')
+                return redirect(url_for('user'))
+            else:
+                flash('Incorrect password!', 'danger')
     return render_template('login.html', form=form)
 
 @app.route('/user')
@@ -102,9 +105,10 @@ def user():
     size_not = len(ads_not_completed)
     ads_completed = Ad.query.filter_by(author=current_user, done=True).order_by(Ad.created_at.desc()).all()
     size = len(ads_completed)
-    other_ads_completed = Ad.query.filter_by(other=current_user, done=True).order_by(Ad.created_at.desc()).all()
+    other_ads_completed = Ad.query.filter_by(other=current_user, confirmed=True).order_by(Ad.created_at.desc()).all()
     size_other = len(other_ads_completed)
-    messages_list = MessageChat.query.filter_by(addressee=current_user, read=False).order_by(MessageChat.created_at.desc()).all()
+    messages_list = MessageChat.query.filter_by(addressee=current_user,
+                                                read=False).order_by(MessageChat.created_at.desc()).all()
     messages_number = len(messages_list)
     ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
     size_ratings = len(ratings_list)
@@ -114,9 +118,9 @@ def user():
         total_votes += rating.vote
     if size_ratings != 0:
         average_votes = "{0:.1f}".format(total_votes/size_ratings)
-    return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,\
-                           ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,\
-                           size_other=size_other, messages_number=messages_number, average_votes=average_votes,\
+    return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,
+                           ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,
+                           size_other=size_other, messages_number=messages_number, average_votes=average_votes,
                            size_ratings=size_ratings)
 
 @app.route('/seeRatings', methods=['GET', 'POST'])
@@ -144,9 +148,10 @@ app.jinja_env.filters['datetimeformat'] = datetimeformat
 def writeAd():
     form = WriteForm()
     if form.validate_on_submit():
-        ad = Ad(title=form.title.data, category=form.category.data, body=form.body.data,\
-                    zone=form.zone.data,author=current_user._get_current_object(),other_user_id=None, done=False,\
-                    rating_done=False, payed=False, confirmed=False)
+        ad = Ad(title=form.title.data, category=form.category.data, body=form.body.data,
+                zone=form.zone.data, author=current_user,
+                other_user_id=None, done=False, rating_done_one=False,
+                rating_done_two=False, payed=False, confirmed=False)
         db.session.add(ad)
         db.session.commit()
         flash('Ad successfully added!', 'success')
@@ -159,8 +164,9 @@ def findAd():
     form = FindForm()
     ads = []
     if form.validate_on_submit():
-        ads = Ad.query.filter_by(title=form.title.data, zone=form.zone.data, category=form.category.data) \
-                .order_by(Ad.created_at.desc()).all()
+        ads = Ad.query.filter_by(title=form.title.data, zone=form.zone.data,
+                                 category=form.category.data, done=False,
+                                 confirmed=False).order_by(Ad.created_at.desc()).all()
         return render_template('findAd.html', form=form, ads=ads)
     return render_template('findAd.html', form=form, ads=ads)
 
@@ -201,7 +207,7 @@ def deleteAd(id):
 @login_required
 def other_user(id):
     author_ads = User.query.filter_by(id=id).first()
-    ads = Ad.query.filter_by(author=author_ads).order_by(Ad.created_at.desc()).all()
+    ads = Ad.query.filter_by(author=author_ads, done=False).order_by(Ad.created_at.desc()).all()
     size = len(ads)
     return render_template('other_user.html', author_ads=author_ads, ads=ads, size=size)
 
@@ -212,7 +218,8 @@ def writeMessage(id, ad_id):
     form = WriteMessage()
     if form.validate_on_submit():
         addressee = User.query.filter_by(id=id).first()
-        message = MessageChat(ad_id=ad_id, sender=current_user._get_current_object(), body=form.body.data, addressee=addressee, read=False, object=form.object.data)
+        message = MessageChat(ad_id=ad_id, sender=current_user, body=form.body.data,
+                              addressee=addressee, read=False, object=form.object.data)
         db.session.add(message)
         db.session.commit()
         flash('Message successfully sent!', 'success')
@@ -226,7 +233,8 @@ def messages():
     sent = MessageChat.query.filter_by(sender_id=current_user.id).order_by(MessageChat.created_at.desc()).all()
     size_msg_received = len(received)
     size_msg_sent = len(sent)
-    return render_template('messages.html', received=received, sent=sent, size_msg_received=size_msg_received, size_msg_sent=size_msg_sent)
+    return render_template('messages.html', received=received, sent=sent,
+                           size_msg_received=size_msg_received, size_msg_sent=size_msg_sent)
 
 @app.route('/markAsRead/<int:id>')
 @login_required
@@ -287,9 +295,9 @@ def addRatingOne(ad_id):
     form = WriteRating()
     if form.validate_on_submit():
         ad = Ad.query.get_or_404(ad_id)
-        rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.author_id, comment=form.comment.data,
-                        vote=form.vote.data)
-        ad.rating_done = True
+        rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.author_id,
+                        comment=form.comment.data, vote=form.vote.data)
+        ad.rating_done_one = True
         db.session.add(rating)
         db.session.add(ad)
         db.session.commit()
@@ -302,9 +310,9 @@ def addRatingTwo(ad_id):
     form = WriteRating()
     if form.validate_on_submit():
         ad = Ad.query.get_or_404(ad_id)
-        rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.other_user_id, comment=form.comment.data,
-                        vote=form.vote.data)
-        ad.rating_done = True
+        rating = Rating(ad_id=ad_id, author_id=current_user.id, addressee_id=ad.other_user_id,
+                        comment=form.comment.data, vote=form.vote.data)
+        ad.rating_done_two = True
         db.session.add(rating)
         db.session.add(ad)
         db.session.commit()
@@ -319,12 +327,6 @@ def editProfile():
     if form.validate_on_submit():
         profile.first_name = form.first_name.data
         profile.last_name = form.last_name.data
-        if form.email.data != profile.email:
-            p = User.query.filter_by(email=form.email.data).first()
-            if p is not None:
-                flash('Email already exists', 'warning')
-            else:
-                profile.email = form.email.data
         if check_password_hash(profile.password_hash, form.password_last.data):
             profile.password_hash = generate_password_hash(form.password.data)
             db.session.add(profile)
@@ -335,7 +337,6 @@ def editProfile():
             flash('The last password is not correct', 'warning')
     form.first_name.data = profile.first_name
     form.last_name.data = profile.last_name
-    form.email.data = profile.email
     return render_template('editProfile.html', form=form)
 
 def send_email(to, subject, template):
@@ -360,6 +361,3 @@ def upload_image(email):
         f.save(destination)
         flash('The photo has been uploaded', 'success')
     return render_template("homepage.html")
-
-if __name__=="__main__":
-    app.run(port=4555, debug=True)

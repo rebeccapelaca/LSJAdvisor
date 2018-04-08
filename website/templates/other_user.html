@@ -2,42 +2,43 @@
 {% block title %}{{ author_ads.email }}{% endblock %}
 {% block myContent %}
     <div class="page-header">
-        <h1 style="font-family: Verdana, SansSerif">{{ author_ads.first_name }} {{ author_ads.last_name }}</h1>
-        <h5 style="font-family: Verdana, SansSerif">{{ author_ads.email }}</h5>
+        <img src="/static/{{ author_ads.email }}" alt="" height="190" width="150">
+        <h1 style="font-family: Verdana,sans-serif">{{ author_ads.first_name }} {{ author_ads.last_name }}</h1>
+        <h5 style="font-family: Verdana,sans-serif">{{ author_ads.email }}</h5>
     </div>
     <div>
         {% if current_user == author_ads %}
-            <a class="btn btn-default" href="{{ url_for('writeAd') }}">Write</a>
-            <a class="btn btn-default" href="{{ url_for('findAd') }}">Find</a>
+            {{ redirect(url_for('user')) }}
         {% endif %}
     </div>
     <br>
     {% if size>0 %}
-        <h4 style="font-family: Verdana, SansSerif">Ads:</h4>
+        <h4 style="font-family: Verdana,sans-serif">Ads:</h4>
     {% endif %}
     <ul class="posts">
         {% for ad in ads %}
             <li class="post">
                 <div class="post-author">
-                    <a href="{{ url_for('other_user', id=author_ads.id) }}">{{ author_ads.first_name }} {{ author_ads.last_name }}</a>
+                    <a href="{{ url_for('other_user', id=author_ads.id) }}">
+                        {{ author_ads.first_name }} {{ author_ads.last_name }}</a>
                 </div>
                 <div class="post-date">
-                    {{ ad.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                    {{ ad.created_at | datetimeformat('%B %d, %Y')}}
                 </div>
                 <div class="post-title">
-                    <h4 style="font-family: Verdana, SansSerif">Title: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Title: </h4>
                     <p style="padding-left: 10px">{{ ad.title }}</p>
                 </div>
                 <div class="post-category">
-                    <h4 style="font-family: Verdana, SansSerif">Category: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Category: </h4>
                     <p style="padding-left: 10px">{{ ad.category }}</p>
                 </div>
                 <div class="post-body">
-                    <h4 style="font-family: Verdana, SansSerif">Description: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Description: </h4>
                     <p style="padding-left: 10px">{{ ad.body }}</p>
                 </div>
                 <div class="post-zone">
-                    <h4 style="font-family: Verdana, SansSerif">Zone: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Zone: </h4>
                     <p style="padding-left: 10px">{{ ad.zone }}</p>
                 </div>
                 <div class="post-footer">

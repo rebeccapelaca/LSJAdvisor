@@ -2,29 +2,31 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block myContent %}
     <div class="page-header">
-        <h1 style="font-family: Verdana, SansSerif">Messages</h1>
+        <h1 style="font-family: Verdana,sans-serif">Messages</h1>
     </div>
     <br>
-    <h3 style="font-family: Verdana, SansSerif">Received messages</h3>
+    <h3 style="font-family: Verdana,sans-serif">Received messages</h3>
     {% if size_msg_received==0 %}
-        <h4 style="font-family: Verdana, SansSerif">No message received</h4>
+        <h4 style="font-family: Verdana,sans-serif; font-style: italic; font-size: small">No message received</h4>
     {% endif %}
     <ul class="messages">
         {% for msg in received %}
             {% if msg.read==False %}
                 <li class="messageNoRead">
                     <div class="message-author">
-                        <a href="{{ url_for('other_user', id=msg.sender_id) }}">{{ msg.sender.first_name }} {{ msg.sender.last_name }}</a>
+                        From: <a href="{{ url_for('other_user', id=msg.sender_id) }}">
+                            {{ msg.sender.first_name }} {{ msg.sender.last_name }}
+                        </a>
                     </div>
                     <div class="message-date">
-                        {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                        {{ msg.created_at | datetimeformat('%B %d, %Y')}}
                     </div>
                     <div class="message-title">
-                        <h4 style="font-family: Verdana, SansSerif">Object: </h4>
+                        <h4 style="font-family: Verdana,sans-serif">Object: </h4>
                         <p style="padding-left: 10px">{{ msg.object }}</p>
                     </div>
                     <div class="message-body">
-                        <h4 style="font-family: Verdana, SansSerif">Message: </h4>
+                        <h4 style="font-family: Verdana,sans-serif">Message: </h4>
                         <p style="padding-left: 10px">{{ msg.body }}</p>
                     </div>
                     <div class="message-footer">
@@ -40,17 +42,19 @@
             {% if msg.read==True %}
                 <li class="messageRead">
                     <div class="message-author">
-                        <a href="{{ url_for('other_user', id=msg.sender_id) }}">{{ msg.sender.first_name }} {{ msg.sender.last_name }}</a>
+                        From: <a href="{{ url_for('other_user', id=msg.sender_id) }}">
+                            {{ msg.sender.first_name }} {{ msg.sender.last_name }}
+                        </a>
                     </div>
                     <div class="message-date">
-                        {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                        {{ msg.created_at | datetimeformat('%B %d, %Y')}}
                     </div>
                     <div class="message-title">
-                        <h4 style="font-family: Verdana, SansSerif">Object: </h4>
+                        <h4 style="font-family: Verdana,sans-serif">Object: </h4>
                         <p style="padding-left: 10px">{{ msg.object }}</p>
                     </div>
                     <div class="message-body">
-                        <h4 style="font-family: Verdana, SansSerif">Message: </h4>
+                        <h4 style="font-family: Verdana,sans-serif">Message: </h4>
                         <p style="padding-left: 10px">{{ msg.body }}</p>
                     </div>
                     <div class="message-footer">
@@ -75,23 +79,25 @@
     <br>
     <h3>Sent messages</h3>
         {% if size_msg_sent==0 %}
-        <h4 style="font-family: Verdana, SansSerif">No message sent</h4>
+        <h4 style="font-family: Verdana,sans-serif; font-style: italic; font-size: small">No message sent</h4>
     {% endif %}
     <ul class="messages">
         {% for msg in sent %}
             <li class="messageRead">
                 <div class="message-author">
-                    <a href="{{ url_for('other_user', id=msg.sender_id) }}">{{ msg.sender.first_name }} {{ msg.sender.last_name }}</a>
+                    To: <a href="{{ url_for('other_user', id=msg.sender_id) }}">
+                        {{ msg.addressee.first_name }} {{ msg.addressee.last_name }}
+                    </a>
                 </div>
                 <div class="message-date">
-                    {{ msg.created_at | datetimeformat('%B %d, %Y %I:%M:%S %Z')}}
+                    {{ msg.created_at | datetimeformat('%B %d, %Y')}}
                 </div>
                 <div class="message-title">
-                    <h4 style="font-family: Verdana, SansSerif">Object: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Object: </h4>
                     <p style="padding-left: 10px">{{ msg.object }}</p>
                 </div>
                 <div class="message-body">
-                    <h4 style="font-family: Verdana, SansSerif">Message: </h4>
+                    <h4 style="font-family: Verdana,sans-serif">Message: </h4>
                     <p style="padding-left: 10px">{{ msg.body }}</p>
                 </div>
             </li>
