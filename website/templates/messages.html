@@ -58,19 +58,19 @@
                         <p style="padding-left: 10px">{{ msg.body }}</p>
                     </div>
                     <div class="message-footer">
-                        <a href="{{ url_for('writeMessage', id=msg.sender_id, ad_id=msg.ad_id) }}">
-                            <span class="label label-primary">Reply</span>
-                        </a>
-                        <a href="{{ url_for('deleteMessage', id=msg.id) }}">
-                            <span class="label label-danger">Delete</span>
-                        </a>
-                        {% if msg.ad.confirmed==False %}
+                       {% if msg.ad.confirmed==False %}
                             {% if current_user.id==msg.ad.author_id %}
                                 <a href="{{ url_for('confirm', ad_id=msg.ad_id, other_id=msg.sender_id) }}">
                                     <span class="label label-info">Confirm</span>
                                 </a>
                             {% endif %}
                         {% endif %}
+                        <a href="{{ url_for('writeMessage', id=msg.sender_id, ad_id=msg.ad_id) }}">
+                            <span class="label label-primary">Reply</span>
+                        </a>
+                        <a href="{{ url_for('deleteMessage', id=msg.id) }}">
+                            <span class="label label-danger">Delete</span>
+                        </a>
                     </div>
                 </li>
             {% endif %}
@@ -99,6 +99,11 @@
                 <div class="message-body">
                     <h4 style="font-family: Verdana,sans-serif">Message: </h4>
                     <p style="padding-left: 10px">{{ msg.body }}</p>
+                </div>
+                <div class="message-footer">
+                    <a href="{{ url_for('deleteMessage', id=msg.id) }}">
+                        <span class="label label-danger">Delete</span>
+                    </a>
                 </div>
             </li>
         {% endfor %}

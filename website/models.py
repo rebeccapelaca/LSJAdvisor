@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String, nullable=False)
     confirmed = db.Column(db.Boolean)
+    votes = db.Column(db.Integer)
 
     def get_id(self):
         return self.email

@@ -68,7 +68,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         u = User(first_name=form.first_name.data, last_name=form.last_name.data,
-                 email=form.email.data, confirmed=False)
+                 email=form.email.data, confirmed=False, votes=0)
         u.password = form.password.data
         db.session.add(u)
         db.session.commit()
@@ -112,20 +112,19 @@ def user():
     messages_number = len(messages_list)
     ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
     size_ratings = len(ratings_list)
-    total_votes = 0
-    average_votes = 0
     for rating in ratings_list:
-        total_votes += rating.vote
+        current_user.votes += rating.vote
+    average_votes = 0
     if size_ratings != 0:
-        average_votes = "{0:.1f}".format(total_votes/size_ratings)
+        average_votes = "{0:.1f}".format(current_user.votes/size_ratings)
     return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,
                            ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,
                            size_other=size_other, messages_number=messages_number, average_votes=average_votes,
                            size_ratings=size_ratings)
 
-@app.route('/seeRatings', methods=['GET', 'POST'])
-def seeRatings():
-    ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
+@app.route('/seeRatings/<int:id>', methods=['GET', 'POST'])
+def seeRatings(id):
+    ratings_list = Rating.query.filter_by(addressee_id=id).order_by(Rating.created_at.desc()).all()
     return render_template('ratings.html', ratings_list=ratings_list)
 
 @app.route('/contacts')
@@ -209,7 +208,16 @@ def other_user(id):
     author_ads = User.query.filter_by(id=id).first()
     ads = Ad.query.filter_by(author=author_ads, done=False).order_by(Ad.created_at.desc()).all()
     size = len(ads)
-    return render_template('other_user.html', author_ads=author_ads, ads=ads, size=size)
+    ratings_list = Rating.query.filter_by(addressee_id=author_ads.id).order_by(Rating.created_at.desc()).all()
+    size_ratings = len(ratings_list)
+    for rating in ratings_list:
+        current_user.votes += rating.vote
+    average_votes = 0
+    if size_ratings != 0:
+        average_votes = "{0:.1f}".format(current_user.votes/size_ratings)
+    return render_template('other_user.html', author_ads=author_ads, ads=ads,
+                           size=size, ratings_list=ratings_list, size_ratings=size_ratings,
+                           average_votes=average_votes)
 
 @app.route('/writeMessage/<int:id>', methods=['GET', 'POST'])
 @app.route('/writeMessage/<int:id>/<int:ad_id>', methods=['GET', 'POST'])
@@ -353,7 +361,7 @@ def upload():
 
 @app.route('/upload_image/<email>', methods=["POST"])
 def upload_image(email):
-    target = os.path.join(APP_ROOT, "/static/profile_images")
+    target = os.path.join(APP_ROOT, "static")
     if not os.path.isdir(target):
         os.mkdir(target)
     for f in request.files.getlist("file"):

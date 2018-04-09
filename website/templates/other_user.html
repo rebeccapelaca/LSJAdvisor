@@ -2,13 +2,14 @@
 {% block title %}{{ author_ads.email }}{% endblock %}
 {% block myContent %}
     <div class="page-header">
-        <img src="/static/profile_images/{{ author_ads.email }}" alt="" height="190" width="150">
+        <img src="/static/{{ author_ads.email }}" alt="" height="190" width="150">
         <h1 style="font-family: Verdana,sans-serif">{{ author_ads.first_name }} {{ author_ads.last_name }}</h1>
         <h5 style="font-family: Verdana,sans-serif">{{ author_ads.email }}</h5>
-    </div>
-    <div>
-        {% if current_user == author_ads %}
-            {{ redirect(url_for('user')) }}
+        <br>
+        {% if size_ratings>0 %}
+            <br>
+            <h4 style="font-family: Verdana,sans-serif">Average rating: {{ average_votes }}</h4>
+            <a href="{{ url_for('seeRatings', id=author_ads.id) }}">See all ratings</a>
         {% endif %}
     </div>
     <br>

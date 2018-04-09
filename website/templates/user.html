@@ -13,7 +13,7 @@
                 <br>
             {% endif %}
         {% endif %}
-        <img src="/static/profile_images/{{ current_user.email }}" alt="" height="190" width="150">
+        <img src="static/{{ current_user.email }}" alt="" height="190" width="150">
         <h1 style="font-family: Verdana,sans-serif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5 style="font-family: Verdana,sans-serif">{{ current_user.email }}</h5>
         <a href="{{ url_for('upload') }}">Upload profile photo</a>
@@ -21,7 +21,7 @@
         {% if size_ratings>0 %}
             <br>
             <h4 style="font-family: Verdana,sans-serif">Average rating: {{ average_votes }}</h4>
-            <a href="{{ url_for('seeRatings') }}">See all ratings</a>
+            <a href="{{ url_for('seeRatings', id=current_user.id) }}">See all ratings</a>
         {% endif %}
     </div>
     <br>
@@ -151,7 +151,7 @@
         {% for ad in other_ads_completed %}
             <li class="post">
                 <div class="post-author">
-                    <a href="{{ url_for('other_user', id=ad.id) }}">
+                    <a href="{{ url_for('other_user', id=ad.author_id) }}">
                         {{ ad.get_first_name() }} {{ ad.get_last_name() }}</a>
                 </div>
                 <div class="post-date">
