@@ -13,7 +13,7 @@
                 <br>
             {% endif %}
         {% endif %}
-        <img src="/static/{{ current_user.email }}" alt="" height="190" width="150">
+        <img src="/static/profile_images/{{ current_user.email }}" alt="" height="190" width="150">
         <h1 style="font-family: Verdana,sans-serif">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
         <h5 style="font-family: Verdana,sans-serif">{{ current_user.email }}</h5>
         <a href="{{ url_for('upload') }}">Upload profile photo</a>

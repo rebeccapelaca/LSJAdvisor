@@ -353,7 +353,7 @@ def upload():
 
 @app.route('/upload_image/<email>', methods=["POST"])
 def upload_image(email):
-    target = os.path.join(APP_ROOT, "static")
+    target = os.path.join(APP_ROOT, "/static/profile_images")
     if not os.path.isdir(target):
         os.mkdir(target)
     for f in request.files.getlist("file"):
