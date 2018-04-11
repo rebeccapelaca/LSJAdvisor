@@ -154,7 +154,7 @@ def writeAd():
         db.session.add(ad)
         db.session.commit()
         flash('Ad successfully added!', 'success')
-    ads = Ad.query.order_by(Ad.created_at.desc()).all()
+    ads = Ad.query.filter_by(done=False, confirmed=False).order_by(Ad.created_at.desc()).all()
     return render_template('writeAd.html', form=form, ads=ads)
 
 @app.route('/findAd', methods=['GET', 'POST'])
@@ -359,13 +359,13 @@ def send_email(to, subject, template):
 def upload():
     return render_template("upload.html")
 
-@app.route('/upload_image/<email>', methods=["POST"])
-def upload_image(email):
+@app.route('/upload_image/<id>', methods=["POST"])
+def upload_image(id):
     target = os.path.join(APP_ROOT, "static")
     if not os.path.isdir(target):
         os.mkdir(target)
     for f in request.files.getlist("file"):
-        destination = "/".join([target, email])
+        destination = "/".join([target, id])
         f.save(destination)
         flash('The photo has been uploaded', 'success')
     return render_template("homepage.html")

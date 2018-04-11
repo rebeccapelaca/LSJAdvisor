@@ -100,3 +100,11 @@ div.footer {
     background-position:center;
     position: relative;
 }
+.circolare {
+  width: 150px;
+  height: 150px;
+  border-radius:999em;
+-moz-border-radius:999em;
+-webkit-border-radius:999em;
+  -o-border-radius: 999em;
+}

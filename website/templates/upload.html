@@ -5,7 +5,7 @@
     <div class="page-header">
         <h1 style="font-family: Verdana,sans-serif">File Uploader</h1>
     </div>
-     <form id="upload-form" action="{{ url_for('upload_image', email=current_user.email) }}"
+     <form id="upload-form" action="{{ url_for('upload_image', id=current_user.id) }}"
            method="POST" enctype="multipart/form-data">
         <input type="file" name="file" accept="image/*">
         <input type="submit" value="Ok">
