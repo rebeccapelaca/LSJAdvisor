@@ -113,10 +113,10 @@ def user():
     ratings_list = Rating.query.filter_by(addressee_id=current_user.id).order_by(Rating.created_at.desc()).all()
     size_ratings = len(ratings_list)
     for rating in ratings_list:
-        current_user.votes += rating.vote
+        current_user.votes = current_user.votes + rating.vote
     average_votes = 0
     if size_ratings != 0:
-        average_votes = "{0:.1f}".format(current_user.votes/size_ratings)
+        average_votes = current_user.votes/float(size_ratings)
     return render_template('user.html', ads_not_completed=ads_not_completed, size_not=size_not,
                            ads_completed=ads_completed, size=size, other_ads_completed=other_ads_completed,
                            size_other=size_other, messages_number=messages_number, average_votes=average_votes,
@@ -214,7 +214,7 @@ def other_user(id):
         current_user.votes += rating.vote
     average_votes = 0
     if size_ratings != 0:
-        average_votes = "{0:.1f}".format(current_user.votes/size_ratings)
+        average_votes = current_user.votes/float(size_ratings)
     return render_template('other_user.html', author_ads=author_ads, ads=ads,
                            size=size, ratings_list=ratings_list, size_ratings=size_ratings,
                            average_votes=average_votes)
